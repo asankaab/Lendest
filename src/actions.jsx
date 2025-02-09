@@ -1,10 +1,9 @@
 import { initializeApp } from "firebase/app";
-import firebaseConfig from './config/firebaseConfig.json'
 import { getAuth, sendEmailVerification, signInWithEmailAndPassword, signOut, updateProfile } from "firebase/auth";
 import { addDoc, collection, deleteDoc, doc, getDocs, getFirestore, Timestamp } from "firebase/firestore";
 import { redirect } from "react-router-dom";
 import 'dayjs/locale/en-gb';
-
+import { firebaseConfig } from "./config/firebaseConfig";
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);

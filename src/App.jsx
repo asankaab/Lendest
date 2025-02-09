@@ -1,16 +1,17 @@
 import './App.css'
 import { useState, useEffect } from 'react'
 import { Outlet, useNavigation, NavLink, useLoaderData, useParams, Await } from 'react-router-dom'
-import firebaseConfig from './config/firebaseConfig.json'
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { initializeApp } from 'firebase/app';
 import { AuthContext } from "./Context"
 import { AccountCircleRounded, HomeRounded, LoginRounded, PersonAddRounded, CloseOutlined, MenuOutlined } from '@mui/icons-material';
 import {Container, LinearProgress, Stack, Box, Button, ButtonGroup, Card, Drawer, List, ListItem, ListItemButton, ListItemText, Skeleton, Typography, useMediaQuery, MenuItem, Menu } from '@mui/material';
 import { onSnapshot ,collection, doc, getAggregateFromServer, getDoc, getDocs, getFirestore, initializeFirestore, memoryLocalCache, persistentLocalCache, query, sum } from "firebase/firestore";
+import { firebaseConfig } from './config/firebaseConfig';
 
 const app = initializeApp(firebaseConfig);
 const authentication = getAuth(app);
+console.log(app)
 
 function App() {
   const [auth, setAuth] = useState(null);

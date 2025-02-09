@@ -1,8 +1,8 @@
 import 'firebaseui/dist/firebaseui.css'
 import { initializeApp } from 'firebase/app';
-import firebaseConfig from './config/firebaseConfig.json'
 
 import { collection, doc, getAggregateFromServer, getDoc, getDocs, getFirestore, initializeFirestore, memoryLocalCache, persistentLocalCache, query, sum } from "firebase/firestore";
+import { firebaseConfig } from './config/firebaseConfig';
 
 const app = initializeApp(firebaseConfig);
 

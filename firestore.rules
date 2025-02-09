@@ -1,10 +1,9 @@
-    rules_version = '2';
-    
+rules_version = '2';
+
 service cloud.firestore {
-  match /databases/{database}/{people} {
+  match /databases/{database}/documents {
     match /{document=**} {
-      allow read;
-      allow write: if request.auth != null && request.auth.uid == "k1GujWb0qwO8nuaYkqfWD0lxjVl1"
+      allow read, write: if false;
     }
   }
 }
