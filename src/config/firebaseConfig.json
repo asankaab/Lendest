@@ -1,0 +1,9 @@
+{
+    "apiKey": "AIzaSyChmoxFVGekrtQpL0KJIYvzAcD5Dm0jhuA",
+    "authDomain": "lendingdata.firebaseapp.com",
+    "databaseURL": "https://lendingdata-default-rtdb.firebaseio.com",
+    "projectId": "lendingdata",
+    "storageBucket": "lendingdata.appspot.com",
+    "messagingSenderId": "635541346095",
+    "appId": "1:635541346095:web:d61e15ac5f07c76d3d33da"
+  }

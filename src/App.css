@@ -1,0 +1,35 @@
+@media screen and (min-width: 600px) {
+
+    .navBtn-wrapper {
+      display: block;
+    }
+  }
+
+
+  body {
+    background-color: rgb(249, 249, 249);
+  }
+
+* {
+      /* width */
+  ::-webkit-scrollbar {
+    width: 3px;
+  }
+
+  /* Track */
+  ::-webkit-scrollbar-track {
+    background-color: aliceblue; 
+    border-radius: 10px;
+  }
+  
+  /* Handle */
+  ::-webkit-scrollbar-thumb {
+    background: rgb(215, 215, 215); 
+    border-radius: 10px;
+  }
+
+  /* Handle on hover */
+  ::-webkit-scrollbar-thumb:hover {
+    background: #8e85f2; 
+  }
+}
