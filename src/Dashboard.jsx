@@ -1,12 +1,15 @@
-import { useEffect, useState } from "react";
-import { useLoaderData, useNavigation, useRouteLoaderData } from "react-router-dom"
+import { useContext, useEffect, useState } from "react";
 
-import { Box, Grid, Skeleton, Stack, Typography } from "@mui/material";
+import { Grid, Stack, Typography } from "@mui/material";
 import { PieChart } from "@mui/x-charts";
-import { collection, collectionGroup, getAggregateFromServer, getCountFromServer, getDocs, limit, query, sum } from "firebase/firestore";
+import { collection, collectionGroup, getAggregateFromServer, getDocs, query, sum, where } from "firebase/firestore";
 import { db } from "./Loaders";
+import { AuthContext } from "./Context";
   
 export default function Dashboard() {
+
+    const auth = useContext(AuthContext);
+    
     const [count, setCount] = useState(0);
     const [chartData, setchartData] = useState([{id: 0, label: 'loading...', value: 0}]);
 
@@ -22,7 +25,8 @@ export default function Dashboard() {
         // count total
 
         const datacollection = collectionGroup(db, 'datacollection');
-        const snapshot = await getAggregateFromServer(datacollection, {
+        const q = query(datacollection, where('user', '==', auth?.uid));
+        const snapshot = await getAggregateFromServer(q, {
           subTotal: sum('amount')
         });
 
@@ -30,30 +34,33 @@ export default function Dashboard() {
 
         // chart data
 
-        const q = query(collection(db, "people"));
+        if (auth?.uid) {
+          const q = query(collection(db, auth?.uid));
 
-        const querySnapshot = await getDocs(q);
+          const querySnapshot = await getDocs(q);
 
-        const docs = querySnapshot.docs;
+          const docs = querySnapshot.docs;
 
-        const namesList = docs.map((doc)=> {
-          return {id: doc.id, name: doc.data().name}
-        })
-
-        let values = [];
-
-        namesList.forEach(async(name) => {
-          await getAggregateFromServer(collection(db, "people", name.id, "datacollection"), {
-            sum: sum('amount')
-          }).then((res) => {
-            values = [...values, {id: name.name, label: name.name, value: res.data().sum}]
-            setchartData(values)
+          const namesList = docs.map((doc)=> {
+            return {id: doc.id, name: doc.data().name}
           })
-        })
+        
 
-      })();
+          let values = [];
 
-    },[])
+          namesList.forEach(async(name) => {
+            await getAggregateFromServer(collection(db, auth?.uid, name.id, "datacollection"), {
+              sum: sum('amount')
+            }).then((res) => {
+              values = [...values, {id: name.name, label: name.name, value: res.data().sum}]
+              setchartData(values)
+            })
+          })
+
+        }
+    })();
+
+    },[auth])
     
 
     return (

@@ -1,17 +1,16 @@
 import './App.css'
 import { useState, useEffect } from 'react'
-import { Outlet, useNavigation, NavLink, useLoaderData, useParams, Await } from 'react-router-dom'
+import { Outlet, useNavigation, NavLink, useParams } from 'react-router-dom'
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { initializeApp } from 'firebase/app';
 import { AuthContext } from "./Context"
 import { AccountCircleRounded, HomeRounded, LoginRounded, PersonAddRounded, CloseOutlined, MenuOutlined } from '@mui/icons-material';
 import {Container, LinearProgress, Stack, Box, Button, ButtonGroup, Card, Drawer, List, ListItem, ListItemButton, ListItemText, Skeleton, Typography, useMediaQuery, MenuItem, Menu } from '@mui/material';
-import { onSnapshot ,collection, doc, getAggregateFromServer, getDoc, getDocs, getFirestore, initializeFirestore, memoryLocalCache, persistentLocalCache, query, sum } from "firebase/firestore";
+import { onSnapshot ,collection, getDocs, getFirestore, query } from "firebase/firestore";
 import { firebaseConfig } from './config/firebaseConfig';
 
 const app = initializeApp(firebaseConfig);
 const authentication = getAuth(app);
-console.log(app)
 
 function App() {
   const [auth, setAuth] = useState(null);
@@ -27,7 +26,6 @@ function App() {
   }, [])
 
   // ******** 
-
 
   const path = useParams();
 
@@ -46,31 +44,30 @@ function App() {
   // fetch names
 
   const [names, setNames] = useState([{id: 0}, {id: 1}, {id: 2}, {id: 3}, {id: 4}]);
-  const [size, setSize] = useState();
 
   useEffect(()=> {
-    
-  const db = getFirestore(app);
-  const q = query(collection(db, "people"));
-
-    onSnapshot(q, (querySnapshot) => {
-      setSize(querySnapshot.size)
-    });
 
     async function getNames() {
 
-      const querySnapshot = await getDocs(q);
+      const db = getFirestore(app);
+      const userId = await auth?.uid
 
-      const docs = await querySnapshot.docs;
+      if (userId) {
+        const q = query(collection(db, userId));
 
-      const names = docs.map((doc)=> {  return {id: doc.id, name: doc.get("name")}   })
+        const querySnapshot = await getDocs(q);
 
-      setNames(names)
+        const docs = await querySnapshot.docs;
+
+        const names = docs.map((doc)=> {  return {id: doc.id, name: doc.get("name")}   })
+
+        setNames(names)
+      }
     }
 
     getNames();
       
-  },[size])
+  },[auth])
 
   // ** NameList component *****
 

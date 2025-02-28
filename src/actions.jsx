@@ -2,8 +2,8 @@ import { initializeApp } from "firebase/app";
 import { getAuth, sendEmailVerification, signInWithEmailAndPassword, signOut, updateProfile } from "firebase/auth";
 import { addDoc, collection, deleteDoc, doc, getDocs, getFirestore, Timestamp } from "firebase/firestore";
 import { redirect } from "react-router-dom";
-import 'dayjs/locale/en-gb';
 import { firebaseConfig } from "./config/firebaseConfig";
+import 'dayjs/locale/en-gb';
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
@@ -18,7 +18,7 @@ export async function addUser({request}) {
     const formData = Object.fromEntries(getForm);
   
     // firestore
-    const peopleRef = collection(db, 'people');
+    const peopleRef = collection(db, auth?.currentUser?.uid);
   
     const docRef = await addDoc(peopleRef, {
         name: formData.name.charAt(0).toUpperCase() + formData.name.slice(1)
@@ -27,7 +27,8 @@ export async function addUser({request}) {
     if (formData.amount) {
         addDoc(collection(peopleRef, docRef.id, 'datacollection'), {
             amount: Number(formData.amount),
-            date: Timestamp.fromDate(new Date(formData.date))
+            date: Timestamp.fromDate(new Date(formData.date)),
+            user: auth?.currentUser?.uid
         })
     }
 
@@ -41,17 +42,17 @@ export async function editData({request, params}) {
 const getForm = await request.formData();
 const formData = Object.fromEntries(getForm);
 
-const peopleRef = collection(db, 'people');
+const peopleRef = collection(db, auth?.currentUser?.uid);
 
 if (formData.deleteuser === "confirmed") {
 
 // delete user operation
 
-    const querySnapshot = await getDocs(collection(db, "people", params.id, "datacollection"));
+    const querySnapshot = await getDocs(collection(db, auth?.currentUser?.uid, params.id, "datacollection"));
     await querySnapshot.forEach((item) => {
-        deleteDoc(doc(db, "people", params.id, "datacollection", item.id));
+        deleteDoc(doc(db, auth?.currentUser?.uid, params.id, "datacollection", item.id));
     });
-    await deleteDoc(doc(db, "people", params.id));
+    await deleteDoc(doc(db, auth?.currentUser?.uid, params.id));
 
     return redirect('/')
 
@@ -61,7 +62,8 @@ if (formData.deleteuser === "confirmed") {
 
     addDoc(collection(peopleRef, params.id, 'datacollection'), {
         amount: Number(formData.amount),
-        date: Timestamp.fromDate(new Date(formData.date))
+        date: Timestamp.fromDate(new Date(formData.date)),
+        user: auth?.currentUser?.uid
     })
 
 } else if (formData.action === "deleteItems" && formData.removeList) {
@@ -70,7 +72,7 @@ if (formData.deleteuser === "confirmed") {
 
     const listArray = formData.removeList.split(',')
     listArray.forEach(async(id) => {
-        await deleteDoc(doc(db, "people", params.id, "datacollection", id))
+        await deleteDoc(doc(db, auth?.currentUser?.uid, params.id, "datacollection", id))
     })
 }
 
