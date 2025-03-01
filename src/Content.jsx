@@ -1,6 +1,6 @@
-import { useLoaderData, Form, useActionData, useNavigation, useFetcher} from 'react-router-dom'
+import { useLoaderData, Form, useActionData, useNavigation, useFetcher, useParams} from 'react-router-dom'
 import { AuthContext } from './Context';
-import { useContext, useEffect, useState} from 'react';
+import { Suspense, useContext, useEffect, useState} from 'react';
 import { Box, Button, ButtonGroup, Card, Divider, IconButton, InputAdornment, Popover, Skeleton, Stack, TextField, Typography } from '@mui/material';
 import { AddCircleOutlineRounded, Close, DeleteRounded, DriveFileRenameOutline, Save } from '@mui/icons-material';
 import dayjs from 'dayjs';
@@ -8,12 +8,15 @@ import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DataGrid, gridClasses, GridToolbarContainer } from '@mui/x-data-grid';
 import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
+import { collection, doc, getAggregateFromServer, getDoc, getDocs, getFirestore, sum } from 'firebase/firestore';
+import { app } from './App';
 
 function Content() {
+    const params = useParams();
 
-    const state = useContext(AuthContext);
+    const auth = useContext(AuthContext);
 
-    const error = useActionData();
+    const db = getFirestore(app);
 
     // ****** Time ***********
 
@@ -25,21 +28,52 @@ function Content() {
 
     // ***** 
 
-    const {name, docId, details, total} = useLoaderData();
+    // const {name, docId, details, total} = useLoaderData();
+    const [name, setName] = useState(null);
+    const [details, setDetails] = useState([]);
+    const [total, setTotal] = useState(null);
+
+    useEffect(()=> {
+        async function getDetails() {
+            const docRef = doc(db, auth?.uid, params.id);
+              const docSnap = await getDoc(docRef);
+              
+              setName(docSnap.data().name);
+            
+              // fetch datacollection
+            
+              const querySnapshot = await getDocs(collection(db, auth?.uid, params.id, "datacollection"));
+              const docs = querySnapshot.docs
+              
+              const details = docs.map((doc)=> {
+                return { id: doc.id, date: doc.data().date, amount: doc.data().amount }
+              })
+              setDetails(details)
+            
+              const totalSnap = await getAggregateFromServer(collection(db, auth?.uid, params.id, "datacollection"), {
+                sum: sum('amount')
+              });
+              setTotal(totalSnap.data().sum);
+            
+              docSnap.metadata.fromCache ? console.log("data loaded from localcache") : null;
+        }
+
+        if (auth) {
+            getDetails();
+        }
+    }),[auth, params.id];
 
     // *****
 
-    const navigation = useNavigation();
-
-    const [loading, setLoading] = useState(false);
+    const [loading, setLoading] = useState(true);
 
     useEffect(()=> {
-        if (navigation.state === 'loading') {
-            setLoading(true);
-        } else {
+        if (details) {
             setLoading(false);
+        } else {
+            setLoading(true);
         }
-    },[navigation.state])
+    },[details]);
 
     // *****
 
@@ -53,7 +87,8 @@ function Content() {
           editable: false,
           valueGetter: (value)=> {
             return dayjs(value.seconds * 1000).format('YYYY-MMM-DD hh:mm A');
-          }
+          },
+          count: 1
         },
         {
           field: 'amount',
@@ -62,6 +97,7 @@ function Content() {
           minWidth: 120,
           flex: 1,
           editable: false,
+          count: 1
         }
       ]
       
@@ -80,7 +116,7 @@ function Content() {
     const [removeList, setremoveList] = useState([]);
 
     function CustomToolbar() {
-        if(state && editMode)
+        if(auth && editMode)
         return (
           <GridToolbarContainer>
             <Form method='post'>
@@ -133,18 +169,20 @@ function Content() {
             <Stack direction='row' gap={2}>                
                 <Stack direction='row' alignItems='center' justifyContent='space-between' flexWrap='wrap' sx={{width: '100%'}}>
                     <Stack direction='row' gap={1}>
-                        <Typography variant='h4'>{navigation.state === 'loading' ? <Skeleton width={80} /> : total}</Typography>
-                        <Typography variant='caption'>{navigation.state === 'loading' ? null : ' LKR'}</Typography>
+                        <Suspense fallback={<Skeleton width={80} />}>
+                            <Typography variant='h4'>{total}</Typography>
+                        </Suspense>
+                        <Typography variant='caption'>{loading ? null : ' LKR'}</Typography>
                         <Divider orientation='vertical' flexItem/>
-                        <Typography variant='h4' color='primary'>{navigation.state === 'loading' ? <Skeleton width={80} /> : name}</Typography>
+                        <Typography variant='h4' color='primary'>{loading ? <Skeleton width={80} /> : name}</Typography>
                     </Stack>
                     <Stack direction='row' gap={1}>
                     <ButtonGroup aria-label="edit or delete" size='small'>
                         {editMode? 
-                            <IconButton disabled={!state || loading} onClick={editModeHandler}><Close/></IconButton> : 
-                            <IconButton disabled={!state || loading} onClick={editModeHandler}><DriveFileRenameOutline/></IconButton> }
+                            <IconButton disabled={!auth || loading} onClick={editModeHandler}><Close/></IconButton> : 
+                            <IconButton disabled={!auth || loading} onClick={editModeHandler}><DriveFileRenameOutline/></IconButton> }
                             <Divider orientation='vertical' variant='middle' flexItem />
-                        <IconButton onClick={closeDelete} color='primary' disabled={!state || loading}><DeleteRounded /></IconButton>
+                        <IconButton onClick={closeDelete} color='primary' disabled={!auth || loading}><DeleteRounded /></IconButton>
                     </ButtonGroup>
                     </Stack>
                 </Stack>
@@ -196,7 +234,7 @@ function Content() {
                     onRowSelectionModelChange={(params)=> setremoveList(params)}
                     checkboxSelection={editMode}
                     disableRowSelectionOnClick
-                    loading={fetcher.state === 'loading' ? true : false}
+                    loading={loading ? true : false}
                     getCellClassName={(params) => {
                         if (params.field === 'amount' && params.value < 0) {
                             return params.value < 0 ? 'negative' : null;
@@ -211,12 +249,12 @@ function Content() {
             <fetcher.Form method='post' onSubmit={(e) => addHandler(e)}>
                 <Stack direction='row' flexWrap='wrap' gap={2}>
                     <TextField autoComplete='off' InputProps={{endAdornment: <InputAdornment position="start">LKR</InputAdornment>}} 
-                    label="Amount" variant="standard" type='tel' name='amount' disabled={!state || loading}/>
+                    label="Amount" variant="standard" type='tel' name='amount' disabled={!auth || loading}/>
                     <Stack direction='row' gap={2} flexWrap='wrap' alignContent='flex-start'>
                         <LocalizationProvider dateAdapter={AdapterDayjs}>
-                            <DateTimePicker label="Date" name="date" value={timeNow} disabled={!state || loading}/>
+                            <DateTimePicker label="Date" name="date" value={timeNow} disabled={!auth || loading}/>
                         </LocalizationProvider>
-                        <Button variant='outlined' type='submit' startIcon={<AddCircleOutlineRounded />} disabled={!state || loading}>Add</Button>
+                        <Button variant='outlined' type='submit' startIcon={<AddCircleOutlineRounded />} disabled={!auth || loading}>Add</Button>
                     </Stack>
                 </Stack>
             </fetcher.Form>

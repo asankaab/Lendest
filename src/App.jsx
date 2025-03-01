@@ -9,7 +9,7 @@ import {Container, LinearProgress, Stack, Box, Button, ButtonGroup, Card, Drawer
 import { onSnapshot ,collection, getDocs, getFirestore, query } from "firebase/firestore";
 import { firebaseConfig } from './config/firebaseConfig';
 
-const app = initializeApp(firebaseConfig);
+export const app = initializeApp(firebaseConfig);
 const authentication = getAuth(app);
 
 function App() {

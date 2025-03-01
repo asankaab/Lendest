@@ -2,7 +2,6 @@ import React from 'react'
 import ReactDOM from 'react-dom/client'
 import './index.css'
 import { createBrowserRouter, RouterProvider } from 'react-router-dom'
-import { getDetails, getNames } from './Loaders.jsx'
 import { addUser, editData, signIn, editProfile } from './actions.jsx'
 
 import App from './App.jsx'
@@ -62,7 +61,6 @@ const router = createBrowserRouter([
                   path: "/",
                   element: <App />,
                   errorElement: <ErrorElement />,
-                  // loader: getNames,
                   children: [
                     {
                       index: true,
@@ -79,7 +77,6 @@ const router = createBrowserRouter([
                       path: ":id",
                       element: <Content />,
                       errorElement: <ErrorElement />,
-                      loader: getDetails,
                       action: editData
                     },
                     {

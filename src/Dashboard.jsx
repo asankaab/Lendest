@@ -2,13 +2,15 @@ import { useContext, useEffect, useState } from "react";
 
 import { Grid, Stack, Typography } from "@mui/material";
 import { PieChart } from "@mui/x-charts";
-import { collection, collectionGroup, getAggregateFromServer, getDocs, query, sum, where } from "firebase/firestore";
-import { db } from "./Loaders";
+import { collection, collectionGroup, getAggregateFromServer, getDocs, getFirestore, query, sum, where } from "firebase/firestore";
 import { AuthContext } from "./Context";
+import { app } from "./App";
   
 export default function Dashboard() {
 
     const auth = useContext(AuthContext);
+
+    const db = getFirestore(app);
     
     const [count, setCount] = useState(0);
     const [chartData, setchartData] = useState([{id: 0, label: 'loading...', value: 0}]);
@@ -21,12 +23,12 @@ export default function Dashboard() {
 
     
     useEffect(() => {
-      (async function (){
+      async function getTotal (){
         // count total
 
         const datacollection = collectionGroup(db, 'datacollection');
-        const q = query(datacollection, where('user', '==', auth?.uid));
-        const snapshot = await getAggregateFromServer(q, {
+        const totalq = query(datacollection);
+        const snapshot = await getAggregateFromServer(totalq, {
           subTotal: sum('amount')
         });
 
@@ -34,7 +36,7 @@ export default function Dashboard() {
 
         // chart data
 
-        if (auth?.uid) {
+        
           const q = query(collection(db, auth?.uid));
 
           const querySnapshot = await getDocs(q);
@@ -57,10 +59,14 @@ export default function Dashboard() {
             })
           })
 
-        }
-    })();
+        
+    }
 
-    },[auth])
+    if (auth) {
+      getTotal();
+    }
+
+    },[auth, db])
     
 
     return (

@@ -27,8 +27,7 @@ export async function addUser({request}) {
     if (formData.amount) {
         addDoc(collection(peopleRef, docRef.id, 'datacollection'), {
             amount: Number(formData.amount),
-            date: Timestamp.fromDate(new Date(formData.date)),
-            user: auth?.currentUser?.uid
+            date: Timestamp.fromDate(new Date(formData.date))
         })
     }
 
@@ -62,8 +61,7 @@ if (formData.deleteuser === "confirmed") {
 
     addDoc(collection(peopleRef, params.id, 'datacollection'), {
         amount: Number(formData.amount),
-        date: Timestamp.fromDate(new Date(formData.date)),
-        user: auth?.currentUser?.uid
+        date: Timestamp.fromDate(new Date(formData.date))
     })
 
 } else if (formData.action === "deleteItems" && formData.removeList) {
