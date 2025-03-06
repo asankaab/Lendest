@@ -1,18 +1,16 @@
 import './App.css'
 import { useState, useEffect } from 'react'
-import { Outlet, useNavigation, NavLink, useParams } from 'react-router-dom'
+import { Outlet, useNavigation, NavLink, useParams } from 'react-router'
 import { getAuth, onAuthStateChanged } from "firebase/auth";
-import { initializeApp } from 'firebase/app';
-import { AuthContext } from "./Context"
+import { app, AuthContext } from "./Context"
 import { AccountCircleRounded, HomeRounded, LoginRounded, PersonAddRounded, CloseOutlined, MenuOutlined } from '@mui/icons-material';
 import {Container, LinearProgress, Stack, Box, Button, ButtonGroup, Card, Drawer, List, ListItem, ListItemButton, ListItemText, Skeleton, Typography, useMediaQuery, MenuItem, Menu } from '@mui/material';
-import { onSnapshot ,collection, getDocs, getFirestore, query } from "firebase/firestore";
-import { firebaseConfig } from './config/firebaseConfig';
+import { collection, doc, getDocs, getFirestore, onSnapshot, query } from "firebase/firestore";
 
-export const app = initializeApp(firebaseConfig);
-const authentication = getAuth(app);
 
 function App() {
+
+  const authentication = getAuth(app);
   const [auth, setAuth] = useState(null);
 
   useEffect(()=> {
@@ -20,10 +18,10 @@ function App() {
     if (user) {
       setAuth(user)
     } else {
-      setAuth(user)
+      setAuth(null)
     }
     });
-  }, [])
+  }, [authentication])
 
   // ******** 
 
@@ -39,8 +37,6 @@ function App() {
 
   const matches = useMediaQuery('(min-width:600px)');
 
-  const navigation = useNavigation();
-
   // fetch names
 
   const [names, setNames] = useState([{id: 0}, {id: 1}, {id: 2}, {id: 3}, {id: 4}]);
@@ -50,22 +46,16 @@ function App() {
     async function getNames() {
 
       const db = getFirestore(app);
-      const userId = await auth?.uid
 
-      if (userId) {
-        const q = query(collection(db, userId));
+      const unsubscribe = onSnapshot(collection(db, auth.uid), (doc) => {
+        setNames(doc.docs.map((doc)=> {  return {id: doc.id, name: doc.get("name")}   }));
+      });
 
-        const querySnapshot = await getDocs(q);
-
-        const docs = await querySnapshot.docs;
-
-        const names = docs.map((doc)=> {  return {id: doc.id, name: doc.get("name")}   })
-
-        setNames(names)
-      }
+      if (!auth) unsubscribe();
+      
     }
 
-    getNames();
+    if (auth) getNames();
       
   },[auth])
 
@@ -81,18 +71,41 @@ function App() {
             <Typography variant='h6' paddingInline={2} paddingBlock={1}>People</Typography>
             {matches ? null : <Button onClick={toggleDrawer(false)}><CloseOutlined /></Button>}
           </Stack>
-          <List sx={{maxHeight: '78vh', minHeight: 400, overflow: 'auto', minWidth: 100, width: {xs: '75vw', sm: 'auto'}}} 
+          {auth ? <List sx={{maxHeight: '95vh', minHeight: '80vh', overflow: 'auto', minWidth: 100, width: {xs: '75vw', sm: 'auto'}}} 
             disablePadding={matches? true : false}>
+              {names.length < 1 && <Typography variant='body2' paddingInline={2} paddingBlock={1}>No data</Typography>}
               {names?.map((element) => {
                   return (
                     <ListItem key={element.id} disablePadding divider onClick={toggleDrawer(false)}>
-                      <ListItemButton component={NavLink} to={element.id} selected={path.id == element.id ? true : false}>
+                      <ListItemButton component={NavLink} to={'../' + element.id} selected={path.id == element.id ? true : false}>
                         <ListItemText primary={element.name || <Skeleton/>} />
                       </ListItemButton>
                     </ListItem>
                   )
                 })}
-          </List>
+          </List> : 
+          <List>
+            <ListItem disablePadding divider>
+              <ListItemButton>
+                <ListItemText primary={<Skeleton animation={false}/>} />
+              </ListItemButton>
+            </ListItem>
+            <ListItem disablePadding divider>
+              <ListItemButton>
+                <ListItemText primary={<Skeleton animation={false} sx={{ opacity: 0.5}}/>} />
+              </ListItemButton>
+            </ListItem>
+            <ListItem disablePadding divider>
+              <ListItemButton>
+                <ListItemText primary={<Skeleton animation={false} sx={{ opacity: 0.25}}/>} />
+              </ListItemButton>
+            </ListItem>
+            <ListItem disablePadding >
+              <ListItemButton>
+                <ListItemText primary={<Skeleton animation={false} sx={{ opacity: 0.15}}/>} />
+              </ListItemButton>
+            </ListItem>
+          </List>}
         </>
         
       )
@@ -112,9 +125,8 @@ function App() {
 
   return (
     <AuthContext.Provider value={auth}>
-        {navigation.state === 'loading' ? <LinearProgress/> : <LinearProgress variant='determinate' value={0} color='none'/> }
           <Container maxWidth='lg' sx={{paddingBlock: {sm: '0.5em', lg: '1em'}}}>
-            <Stack
+            <Stack maxHeight='100vh'
               direction={{ xs: 'column', sm: 'row' }}
                   gap={{ xs: 2, sm: 2, md: 2 }}
                 >
@@ -131,24 +143,23 @@ function App() {
                       <Menu id="basic-menu" anchorEl={anchorEl} open={openMenu} onClose={handleClose} MenuListProps={{
                           'aria-labelledby': 'basic-button', }} anchorOrigin={{ vertical: 'bottom', horizontal: 'right', }} transformOrigin={{ vertical: 'top', horizontal: 'right', }} elevation={4}
                       >
-                        <MenuItem onClick={handleClose} component={NavLink} to='/profile'>Profile</MenuItem>
-                        <MenuItem onClick={handleClose} component={NavLink} to='/login'>Logout</MenuItem>
+                        <MenuItem onClick={handleClose} component={NavLink} to='../profile'>Profile</MenuItem>
+                        <MenuItem onClick={handleClose} component={NavLink} to='../login'>Logout</MenuItem>
                       </Menu>
                       {auth? 
                         <ButtonGroup variant='contained' disableElevation component='nav'>
-                          <Button size='large' component={NavLink} to='/' startIcon={<HomeRounded/>} sx={{flexGrow: 1}}>Dashboard</Button>
-                          <Button component={NavLink} to='/adduser'><PersonAddRounded/></Button>
+                          <Button size='large' component={NavLink} to='../' startIcon={<HomeRounded/>} sx={{flexGrow: 1}}>Dashboard</Button>
+                          <Button component={NavLink} to='../adduser'><PersonAddRounded/></Button>
                           <Button id="basic-button"
                             aria-controls={openMenu ? 'basic-menu' : undefined} aria-haspopup="true" aria-expanded={openMenu ? 'true' : undefined} onClick={handleMenuClick}><AccountCircleRounded/>
                           </Button>
                             
-                          {!matches ? <Button  onClick={toggleDrawer(true)} ><MenuOutlined/></Button> : null}
+                          {!matches ? <Button onClick={toggleDrawer(true)} ><MenuOutlined/></Button> : null}
                         </ButtonGroup>
                         : 
                         <ButtonGroup variant='contained' disableElevation component='nav'>
-                          <Button size='large' component={NavLink} to='/' startIcon={<HomeRounded/>} sx={{flexGrow: 1}}>Dashboard</Button>
-                          <Button component={NavLink} to='/login' endIcon={<LoginRounded/>} sx={{flexGrow: 1}}>Login</Button>
-                          {!matches ? <Button  onClick={toggleDrawer(true)}><Menu/></Button> : null}
+                          <Button size='large' component={NavLink} to='../' startIcon={<HomeRounded/>} sx={{flexGrow: 1}}>Dashboard</Button>
+                          <Button component={NavLink} to='../login' endIcon={<LoginRounded/>} sx={{flexGrow: 1}}>Login</Button>
                         </ButtonGroup>
                         }
                       
@@ -157,7 +168,7 @@ function App() {
                         <NameList disablePadding={true}/>
                       </Card> : null}
                     </Stack>
-                <Card variant='outlined' sx={{width: '100%', padding: '1em', minHeight:{ xs: '75vh', lg: '90vh'}, display: 'flex', alignContent: 'space-between'}}>
+                <Card variant='outlined' sx={{width: '100%', padding: '1em', minHeight: '80vh'}}>
                   <Outlet />
                 </Card>
             </Stack>

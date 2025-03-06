@@ -1,6 +1,6 @@
 import { useContext } from "react"
 import { AuthContext } from "./Context";
-import { Link } from "react-router-dom";
+import { Link } from "react-router";
 import { Avatar, Button, Divider, Grid, ListItem, ListItemIcon, Stack, Typography } from "@mui/material";
 import { AccountCircle, MailRounded } from "@mui/icons-material";
 

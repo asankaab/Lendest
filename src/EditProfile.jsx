@@ -1,6 +1,6 @@
 import { useContext } from "react"
 import { AuthContext } from "./Context";
-import { Form, Link } from "react-router-dom";
+import { Form, Link } from "react-router";
 
 export default function Profile() {
 

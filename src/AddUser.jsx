@@ -4,14 +4,21 @@ import { DateTimePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import dayjs from "dayjs";
 import { useContext, useEffect, useState } from "react";
-import { Form, useActionData, useNavigation } from "react-router-dom";
-import { Link } from "react-router-dom";
+import { Form, useActionData, useNavigation, Link, useNavigate } from "react-router";
+import { AuthContext } from "./Context";
 
 export default function AddUser() {
+
+    const auth = useContext(AuthContext);
     
     const navigation = useNavigation();
+    const navigate = useNavigate();
 
     const actiondata = useActionData();
+
+    if (actiondata) {
+        navigate('/' + actiondata)    
+    }
 
     const [alert, setAlert] = useState(false);
 
@@ -36,6 +43,8 @@ export default function AddUser() {
 
     // ***** 
 
+    if (auth?.emailVerified) {
+
     return (
         <div className="addUser">
             <Grid container direction='column' spacing={2} maxWidth={400} component={Form} method="post" >
@@ -59,6 +68,13 @@ export default function AddUser() {
                 <Alert icon={<Check fontSize="inherit" />} severity="success">User Added with ID: <Link to={'/' + actiondata}>{actiondata}</Link></Alert> : null }
                 </Grid>
             </Grid>
-        </div>
-    )
+        </div>)} 
+        else {
+        return (
+            <Stack direction='column' spacing={2}>
+                <Alert severity="warning">Please verify your email: {auth?.email}</Alert>
+                <Button component={Link} to="/signup">Verify</Button>
+            </Stack>
+        )
+    }
 }

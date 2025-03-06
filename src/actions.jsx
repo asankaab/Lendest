@@ -1,7 +1,7 @@
 import { initializeApp } from "firebase/app";
 import { getAuth, sendEmailVerification, signInWithEmailAndPassword, signOut, updateProfile } from "firebase/auth";
 import { addDoc, collection, deleteDoc, doc, getDocs, getFirestore, Timestamp } from "firebase/firestore";
-import { redirect } from "react-router-dom";
+import { redirect } from "react-router";
 import { firebaseConfig } from "./config/firebaseConfig";
 import 'dayjs/locale/en-gb';
 

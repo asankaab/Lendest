@@ -6,11 +6,11 @@
   "hosting": {
     "site": "lendest-v1",
     "public": "dist",
-    "source": ".",
     "ignore": [
       "firebase.json",
       "**/.*",
-      "**/node_modules/**"
+      "**/node_modules/**",
+      ".env.local"
     ],
     "frameworksBackend": {
       "region": "europe-west1"

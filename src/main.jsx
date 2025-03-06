@@ -1,7 +1,7 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
 import './index.css'
-import { createBrowserRouter, RouterProvider } from 'react-router-dom'
+import { createBrowserRouter, RouterProvider } from 'react-router'
 import { addUser, editData, signIn, editProfile } from './actions.jsx'
 
 import App from './App.jsx'
@@ -14,6 +14,7 @@ import AddUser from './AddUser.jsx'
 import ErrorElement from './ErrorElement.jsx'
 import { ThemeProvider } from '@emotion/react'
 import { createTheme } from '@mui/material'
+import Signup from './Signup.jsx'
 
 const theme = createTheme({
   palette: {
@@ -65,13 +66,18 @@ const router = createBrowserRouter([
                     {
                       index: true,
                       errorElement: <ErrorElement />,
-                      element: <Dashboard />
+                      element: <Dashboard />,
                     },
                     {
                       path: "login",
                       errorElement: <ErrorElement />,
                       element: <Login />,
                       action: signIn,
+                    },
+                    {
+                      path: "signup",
+                      element: <Signup />,
+                      action: signIn
                     },
                     {
                       path: ":id",
@@ -97,7 +103,17 @@ const router = createBrowserRouter([
                     }
                             ]
                   }
-                ])
+                ], {
+                  future: {
+                    v7_relativeSplatPath: true,
+                    v7_startTransition: true,
+                    v7_fetcherPersist: true,
+                    v7_normalizeFormMethod: true,
+                    v7_partialHydration: true,
+                    v7_skipActionErrorRevalidation: true,
+                    
+                  },
+                })
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>

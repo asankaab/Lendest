@@ -1,10 +1,11 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useState, Suspense } from "react";
 
-import { Grid, Stack, Typography } from "@mui/material";
+import { Grid, Skeleton, Stack, Typography, useMediaQuery } from "@mui/material";
 import { PieChart } from "@mui/x-charts";
-import { collection, collectionGroup, getAggregateFromServer, getDocs, getFirestore, query, sum, where } from "firebase/firestore";
+import { collection, getAggregateFromServer, getDocs, getFirestore, query, sum, where } from "firebase/firestore";
 import { AuthContext } from "./Context";
-import { app } from "./App";
+import { app } from "./Context";
+import Login from "./Login";
   
 export default function Dashboard() {
 
@@ -13,7 +14,7 @@ export default function Dashboard() {
     const db = getFirestore(app);
     
     const [count, setCount] = useState(0);
-    const [chartData, setchartData] = useState([{id: 0, label: 'loading...', value: 0}]);
+    const [chartData, setchartData] = useState([]);
 
     useEffect(()=> {
       setInterval(() => {
@@ -23,19 +24,9 @@ export default function Dashboard() {
 
     
     useEffect(() => {
-      async function getTotal (){
-        // count total
-
-        const datacollection = collectionGroup(db, 'datacollection');
-        const totalq = query(datacollection);
-        const snapshot = await getAggregateFromServer(totalq, {
-          subTotal: sum('amount')
-        });
-
-        setCount(snapshot.data().subTotal)
+      async function getChartData (){
 
         // chart data
-
         
           const q = query(collection(db, auth?.uid));
 
@@ -58,24 +49,36 @@ export default function Dashboard() {
               setchartData(values)
             })
           })
-
-        
     }
 
     if (auth) {
-      getTotal();
+      getChartData();
     }
 
     },[auth, db])
+
+    useEffect(() => {
+        // total count
+        if (chartData) {
+          setCount(chartData.reduce((acc, curr) => acc + curr.value, 0))
+        }
+    },[chartData])
+
+    const matches = useMediaQuery('(min-width:600px)');
     
+    if (!auth) return <Login/>
 
     return (
-        <Grid container rowGap={2} alignContent='space-between'>
-              <Grid item xs={12} md={9}> 
-                <Typography variant="h2">{count} LKR</Typography>
+      <Stack direction="column" justifyContent="space-between" minHeight={matches ? '90vh' : '80vh'}>
+        <Grid container rowGap={2} alignContent='flex-start' wrap="wrap">
+              <Grid item xs={12} md={8}>
+                <Suspense fallback={<Skeleton/>}>
+                  <Typography variant="h2" noWrap>{count} <Typography variant="subtitle2" component="sup">LKR</Typography></Typography>
+                </Suspense>
                 <Typography variant="body">{count === undefined ? 'Calculating...' : "total money lended."}</Typography>
               </Grid>
-              <Grid item xs={12} md={3}>
+              <Grid item xs={12} md={4} minWidth={60}>
+                {chartData[0] &&
                 <PieChart
                       series={[
                         {
@@ -99,15 +102,19 @@ export default function Dashboard() {
                             itemMarkHeight: 10,
                             padding: 0,
                             hidden: false
-                          }}}
+                          }
+                          }}
                       
-                      width={190}
-                      height={290}
-                />
+                      width={220}
+                      height={260}
+                />}
               </Grid>
-              <Grid item xs={12} md={12} component={Stack} justifyContent='flex-end'>
-                <img src="./lendest.svg" alt="" width={120}/>
-              </Grid>
-      </Grid>
+        </Grid>
+        <Grid direction="row-reverse" container justifyContent="space-between">
+          <Grid item>
+            <img src="./lendest.svg" alt="" width={120}/>
+          </Grid>
+        </Grid>
+      </Stack>
     )
 }

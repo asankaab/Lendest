@@ -1,4 +1,4 @@
-import { useLoaderData, Form, useActionData, useNavigation, useFetcher, useParams} from 'react-router-dom'
+import { Form, useFetcher, useParams} from 'react-router'
 import { AuthContext } from './Context';
 import { Suspense, useContext, useEffect, useState} from 'react';
 import { Box, Button, ButtonGroup, Card, Divider, IconButton, InputAdornment, Popover, Skeleton, Stack, TextField, Typography } from '@mui/material';
@@ -9,7 +9,7 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DataGrid, gridClasses, GridToolbarContainer } from '@mui/x-data-grid';
 import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
 import { collection, doc, getAggregateFromServer, getDoc, getDocs, getFirestore, sum } from 'firebase/firestore';
-import { app } from './App';
+import { app } from './Context';
 
 function Content() {
     const params = useParams();
@@ -38,7 +38,7 @@ function Content() {
             const docRef = doc(db, auth?.uid, params.id);
               const docSnap = await getDoc(docRef);
               
-              setName(docSnap.data().name);
+              setName(docSnap.data()?.name);
             
               // fetch datacollection
             
@@ -62,18 +62,6 @@ function Content() {
             getDetails();
         }
     }),[auth, params.id];
-
-    // *****
-
-    const [loading, setLoading] = useState(true);
-
-    useEffect(()=> {
-        if (details) {
-            setLoading(false);
-        } else {
-            setLoading(true);
-        }
-    },[details]);
 
     // *****
 
@@ -127,6 +115,13 @@ function Content() {
       }
 
     const fetcher = useFetcher();
+
+    const [loading, setLoading] = useState(true);
+
+    useEffect(()=> {
+        setLoading(fetcher.state === 'loading')
+    }
+    ,[fetcher.state]);
 
     async function removeHandler() {
         if (removeList[0]) {
@@ -210,7 +205,7 @@ function Content() {
             </Stack>
 
             <Box sx={{
-                        height: 409,
+                        height: 500,
                         overflow: 'auto',
                         width: '100%',
                         [`.${gridClasses.cell}.negative`]: {
