@@ -4,16 +4,15 @@
     "indexes": "firestore.indexes.json"
   },
   "hosting": {
-    "site": "lendest-v1",
-    "public": "dist",
+    "source": "dist",
     "ignore": [
       "firebase.json",
       "**/.*",
       "**/node_modules/**",
-      ".env.local"
+      "**.env.local"
     ],
     "frameworksBackend": {
-      "region": "europe-west1"
+      "region": "us-central1"
     }
   }
 }
