@@ -71,7 +71,7 @@ function App() {
             <Typography variant='h6' paddingInline={2} paddingBlock={1}>People</Typography>
             {matches ? null : <Button onClick={toggleDrawer(false)}><CloseOutlined /></Button>}
           </Stack>
-          {auth ? <List sx={{maxHeight: '95vh', minHeight: '80vh', overflow: 'auto', minWidth: 100, width: {xs: '75vw', sm: 'auto'}}} 
+          {auth ? <List sx={{maxHeight: { xs: '75svh', md: '80vh' }, minHeight: '80vh', overflow: 'auto', minWidth: 100, width: {xs: '75vw', sm: 'auto'}}} 
             disablePadding={matches? true : false}>
               {names.length < 1 && <Typography variant='body2' paddingInline={2} paddingBlock={1}>No data</Typography>}
               {names?.map((element) => {
@@ -168,7 +168,7 @@ function App() {
                         <NameList disablePadding={true}/>
                       </Card> : null}
                     </Stack>
-                <Card variant='outlined' sx={{width: '100%', padding: '1em', minHeight: '80vh'}}>
+                <Card variant='outlined' sx={{width: '100%', padding: '1em', minHeight: '80vh', overflow: 'auto'}}>
                   <Outlet />
                 </Card>
             </Stack>
