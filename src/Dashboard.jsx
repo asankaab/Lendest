@@ -2,7 +2,7 @@ import { useContext, useEffect, useState, Suspense } from "react";
 
 import { Grid, Skeleton, Stack, Typography, useMediaQuery } from "@mui/material";
 import { PieChart } from "@mui/x-charts";
-import { collection, getAggregateFromServer, getDocs, getFirestore, query, sum, where } from "firebase/firestore";
+import { collection, getAggregateFromServer, getDocs, getFirestore, limit, query, sum, where } from "firebase/firestore";
 import { AuthContext } from "./Context";
 import { app } from "./Context";
 import Login from "./Login";
@@ -24,45 +24,57 @@ export default function Dashboard() {
 
     
     useEffect(() => {
-      async function getChartData (){
+      async function getChartDataAndTotal (){
 
         // chart data
         
-          const q = query(collection(db, auth?.uid));
+          const chartDataQuery = query(collection(db, auth?.uid), limit(8));
 
-          const querySnapshot = await getDocs(q);
+          const chartQuerySnapshot = await getDocs(chartDataQuery);
 
-          const docs = querySnapshot.docs;
-
-          const namesList = docs.map((doc)=> {
+          const names = chartQuerySnapshot.docs.map((doc)=> {
             return {id: doc.id, name: doc.data().name}
           })
         
 
-          let values = [];
+          let namevalues = [];
+
+          names.forEach(async(name) => {
+            await getAggregateFromServer(collection(db, auth?.uid, name.id, "datacollection"), {
+              sum: sum('amount')
+            }).then((res) => {
+              namevalues = [...namevalues, {id: name.name, label: name.name, value: res.data().sum}]
+              setchartData(namevalues)
+            })
+          })
+
+        // total count
+
+          const totalQuery = query(collection(db, auth?.uid));
+
+          const totalQuerySnapshot = await getDocs(totalQuery);
+
+          const namesList = totalQuerySnapshot.docs.map((doc)=> {
+            return { id: doc.id, name: doc.data().name }
+          })
+        
+          let totalValues = [];
 
           namesList.forEach(async(name) => {
             await getAggregateFromServer(collection(db, auth?.uid, name.id, "datacollection"), {
               sum: sum('amount')
             }).then((res) => {
-              values = [...values, {id: name.name, label: name.name, value: res.data().sum}]
-              setchartData(values)
+              totalValues = [...totalValues, { value: res.data().sum }]
+              setCount(totalValues.reduce((acc, curr) => acc + curr.value, 0))
             })
           })
     }
 
     if (auth) {
-      getChartData();
+      getChartDataAndTotal();
     }
 
     },[auth, db])
-
-    useEffect(() => {
-        // total count
-        if (chartData) {
-          setCount(chartData.reduce((acc, curr) => acc + curr.value, 0))
-        }
-    },[chartData])
 
     const matches = useMediaQuery('(min-width:600px)');
     

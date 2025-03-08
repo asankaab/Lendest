@@ -32,36 +32,36 @@ function Content() {
     const [name, setName] = useState(null);
     const [details, setDetails] = useState([]);
     const [total, setTotal] = useState(null);
+    
+    async function getDetails() {
+        const docRef = doc(db, auth?.uid, params.id);
+        const docSnap = await getDoc(docRef);
+        
+        setName(docSnap.data()?.name);
+    
+        // fetch datacollection
+    
+        const querySnapshot = await getDocs(collection(db, auth?.uid, params.id, "datacollection"));
+        const docs = querySnapshot.docs
+        
+        const details = docs.map((doc)=> {
+            return { id: doc.id, date: doc.data().date, amount: doc.data().amount }
+        })
+        setDetails(details)
+    
+        const totalSnap = await getAggregateFromServer(collection(db, auth?.uid, params.id, "datacollection"), {
+            sum: sum('amount')
+        });
+        setTotal(totalSnap.data().sum);
+    
+        docSnap.metadata.fromCache ? console.log("data loaded from localcache") : null;
+    }
 
     useEffect(()=> {
-        async function getDetails() {
-            const docRef = doc(db, auth?.uid, params.id);
-              const docSnap = await getDoc(docRef);
-              
-              setName(docSnap.data()?.name);
-            
-              // fetch datacollection
-            
-              const querySnapshot = await getDocs(collection(db, auth?.uid, params.id, "datacollection"));
-              const docs = querySnapshot.docs
-              
-              const details = docs.map((doc)=> {
-                return { id: doc.id, date: doc.data().date, amount: doc.data().amount }
-              })
-              setDetails(details)
-            
-              const totalSnap = await getAggregateFromServer(collection(db, auth?.uid, params.id, "datacollection"), {
-                sum: sum('amount')
-              });
-              setTotal(totalSnap.data().sum);
-            
-              docSnap.metadata.fromCache ? console.log("data loaded from localcache") : null;
-        }
-
         if (auth) {
             getDetails();
         }
-    }),[auth, params.id];
+    }),[auth];
 
     // *****
 
@@ -76,7 +76,6 @@ function Content() {
           valueGetter: (value)=> {
             return dayjs(value.seconds * 1000).format('YYYY-MMM-DD hh:mm A');
           },
-          count: 1
         },
         {
           field: 'amount',
@@ -85,7 +84,6 @@ function Content() {
           minWidth: 120,
           flex: 1,
           editable: false,
-          count: 1
         }
       ]
       
@@ -115,13 +113,6 @@ function Content() {
       }
 
     const fetcher = useFetcher();
-
-    const [loading, setLoading] = useState(true);
-
-    useEffect(()=> {
-        setLoading(fetcher.state === 'loading')
-    }
-    ,[fetcher.state]);
 
     async function removeHandler() {
         if (removeList[0]) {
@@ -167,17 +158,17 @@ function Content() {
                         <Suspense fallback={<Skeleton width={80} />}>
                             <Typography variant='h4'>{total}</Typography>
                         </Suspense>
-                        <Typography variant='caption'>{loading ? null : ' LKR'}</Typography>
+                        <Typography variant='caption'>{fetcher.state === 'loading' ? null : ' LKR'}</Typography>
                         <Divider orientation='vertical' flexItem/>
-                        <Typography variant='h4' color='primary'>{loading ? <Skeleton width={80} /> : name}</Typography>
+                        <Typography variant='h4' color='primary'>{fetcher.state === 'loading' ? <Skeleton width={80} /> : name}</Typography>
                     </Stack>
                     <Stack direction='row' gap={1}>
                     <ButtonGroup aria-label="edit or delete" size='small'>
                         {editMode? 
-                            <IconButton disabled={!auth || loading} onClick={editModeHandler}><Close/></IconButton> : 
-                            <IconButton disabled={!auth || loading} onClick={editModeHandler}><DriveFileRenameOutline/></IconButton> }
+                            <IconButton disabled={!auth || fetcher.state === 'loading'} onClick={editModeHandler}><Close/></IconButton> : <>
+                            <IconButton disabled={!auth || fetcher.state === 'loading'} onClick={editModeHandler}><DriveFileRenameOutline/></IconButton> 
                             <Divider orientation='vertical' variant='middle' flexItem />
-                        <IconButton onClick={closeDelete} color='primary' disabled={!auth || loading}><DeleteRounded /></IconButton>
+                        <IconButton onClick={closeDelete} color='primary' disabled={!auth || fetcher.state === 'loading'}><DeleteRounded /></IconButton></>}
                     </ButtonGroup>
                     </Stack>
                 </Stack>
@@ -216,27 +207,16 @@ function Content() {
                     rows={rows}
                     columns={columns}
                     editMode='row'
-                    initialState={{
-                    pagination: {
-                        paginationModel: {
-                        pageSize: 5,
-                        },
-                    },
-                    }}
-                    pageSizeOptions={[5]}
-                    autoPageSize
-                    autosizeOnMount
                     onRowSelectionModelChange={(params)=> setremoveList(params)}
                     checkboxSelection={editMode}
-                    disableRowSelectionOnClick
-                    loading={loading ? true : false}
+                    loading={fetcher.state === 'loading' ? true : false}
                     getCellClassName={(params) => {
                         if (params.field === 'amount' && params.value < 0) {
                             return params.value < 0 ? 'negative' : null;
                         }
                         return '';
                         }}
-                    disableColumnMenu={true}
+                    disableColumnMenu
                     slots={{ toolbar: CustomToolbar }}
                 />
             </Box>
@@ -244,12 +224,12 @@ function Content() {
             <fetcher.Form method='post' onSubmit={(e) => addHandler(e)}>
                 <Stack direction='row' flexWrap='wrap' gap={2}>
                     <TextField autoComplete='off' InputProps={{endAdornment: <InputAdornment position="start">LKR</InputAdornment>}} 
-                    label="Amount" variant="standard" type='tel' name='amount' disabled={!auth || loading}/>
+                    label="Amount" variant="standard" type='tel' name='amount' disabled={!auth || fetcher.state === 'loading'}/>
                     <Stack direction='row' gap={2} flexWrap='wrap' alignContent='flex-start'>
                         <LocalizationProvider dateAdapter={AdapterDayjs}>
-                            <DateTimePicker label="Date" name="date" value={timeNow} disabled={!auth || loading}/>
+                            <DateTimePicker label="Date" name="date" value={timeNow} disabled={!auth || fetcher.state === 'loading'}/>
                         </LocalizationProvider>
-                        <Button variant='outlined' type='submit' startIcon={<AddCircleOutlineRounded />} disabled={!auth || loading}>Add</Button>
+                        <Button variant='outlined' type='submit' startIcon={<AddCircleOutlineRounded />} disabled={!auth || fetcher.state === 'loading'}>Add</Button>
                     </Stack>
                 </Stack>
             </fetcher.Form>
