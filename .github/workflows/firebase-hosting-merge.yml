@@ -18,3 +18,12 @@ jobs:
           firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_LENDEST_V1 }}
           channelId: live
           projectId: lendest-v1
+
+env:
+  VITE_API_KEY: AIzaSyA2qNG3TeHWNt-Ec6X8u1AJsYFQ2L-QxmE
+  VITE_AUTH_DOMAIN: lendest-v1.firebaseapp.com
+  VITE_DATABASE_URL: https://lendest-v1-default-rtdb.firebaseio.com
+  VITE_PROJECT_ID: lendest-v1
+  VITE_STORAGE_BUCKET: lendest-v1.firebasestorage.app
+  VITE_MESSAGING_SENDER_ID: 593183044303
+  VITE_APP_ID: 1:593183044303:web:bbab21b877cbdf12f7fdba

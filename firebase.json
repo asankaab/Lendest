@@ -4,12 +4,12 @@
     "indexes": "firestore.indexes.json"
   },
   "hosting": {
-    "source": "dist",
+    "source": ".",
     "ignore": [
       "firebase.json",
       "**/.*",
       "**/node_modules/**",
-      "**.env.local"
+      ".env"
     ],
     "frameworksBackend": {
       "region": "us-central1"
