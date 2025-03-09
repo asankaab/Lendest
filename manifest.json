@@ -1,14 +1,14 @@
 {
-    "name": "Lendest",
-    "icons": [
-      {
-        "src": "icons/lendest-icon.png",
-        "type": "image/png",
-        "sizes": "512x512"
-      }
-    ],
-    "start_url": "index.html",
-    "display": "minimal-ui",
-    "prefer_related_applications": true
-  }
+  "name": "Lendest",
+  "icons": [
+    {
+      "src": "../manifest-icon.png",
+      "type": "image/png",
+      "sizes": "512x512"
+    }
+  ],
+  "start_url": "/",
+  "display": "minimal-ui",
+  "prefer_related_applications": true
+}
   
