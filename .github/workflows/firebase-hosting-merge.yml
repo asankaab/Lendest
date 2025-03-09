@@ -18,6 +18,8 @@ jobs:
           firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_LENDEST_V1 }}
           channelId: live
           projectId: lendest-v1
+        env:
+          FIREBASE_CLI_EXPERIMENTS: webframeworks
 
 env:
   VITE_API_KEY: AIzaSyA2qNG3TeHWNt-Ec6X8u1AJsYFQ2L-QxmE
