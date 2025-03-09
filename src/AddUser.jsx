@@ -35,11 +35,11 @@ export default function AddUser() {
 
     // ****** Time ***********
 
-    const [timeNow, setTimeNow] = useState(dayjs());
+    // const [timeNow, setTimeNow] = useState(dayjs());
 
-    setInterval(() => {
-            setTimeNow(dayjs())
-        }, 60000);
+    // setInterval(() => {
+    //         setTimeNow(dayjs())
+    //     }, 60000);
 
     // ***** 
 
@@ -55,7 +55,7 @@ export default function AddUser() {
                     <Stack direction='row' spacing={2}>
                         <TextField label='Amount' type="tel" name="amount" autoComplete="off" required/>
                         <LocalizationProvider dateAdapter={AdapterDayjs}>
-                            <DateTimePicker label="Date" name="date" value={timeNow}/>
+                            <DateTimePicker label="Date" name="date" value={dayjs()}/>
                         </LocalizationProvider>
                         </Stack>            
                 </Grid>

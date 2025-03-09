@@ -25,7 +25,6 @@ export default function Dashboard() {
     
     useEffect(() => {
       async function getChartDataAndTotal (){
-
         // chart data
         
           const chartDataQuery = query(collection(db, auth?.uid), limit(8));
@@ -54,18 +53,15 @@ export default function Dashboard() {
 
           const totalQuerySnapshot = await getDocs(totalQuery);
 
-          const namesList = totalQuerySnapshot.docs.map((doc)=> {
-            return { id: doc.id, name: doc.data().name }
-          })
-        
-          let totalValues = [];
+          let totalArray = [];
 
-          namesList.forEach(async(name) => {
-            await getAggregateFromServer(collection(db, auth?.uid, name.id, "datacollection"), {
+          totalQuerySnapshot.forEach((doc) => {
+            getAggregateFromServer(collection(db, auth?.uid, doc.id, "datacollection"), {
               sum: sum('amount')
-            }).then((res) => {
-              totalValues = [...totalValues, { value: res.data().sum }]
-              setCount(totalValues.reduce((acc, curr) => acc + curr.value, 0))
+            }).then((data) => {
+              const sumVal = data.data().sum;
+              totalArray = [...totalArray, sumVal]
+              setCount(totalArray.reduce((acc, curr) => acc + curr, 0))
             })
           })
     }

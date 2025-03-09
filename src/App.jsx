@@ -12,16 +12,20 @@ function App() {
 
   const authentication = getAuth(app);
   const [auth, setAuth] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(()=> {
     onAuthStateChanged(authentication, (user) => {
     if (user) {
       setAuth(user)
+      setLoading(false)
     } else {
       setAuth(null)
+      setLoading(false)
     }
     });
-  }, [authentication])
+    
+  }, [authentication,loading])
 
   // ******** 
 
@@ -39,7 +43,7 @@ function App() {
 
   // fetch names
 
-  const [names, setNames] = useState([{id: 0}, {id: 1}, {id: 2}, {id: 3}, {id: 4}]);
+  const [names, setNames] = useState([{id: 0}, {id: 1}, {id: 2}, {id: 3}, {id: 4}, {id: 5}, {id: 6}, {id: 7}]);
 
   useEffect(()=> {
 
@@ -124,7 +128,7 @@ function App() {
   
 
   return (
-    <AuthContext.Provider value={auth}>
+    <AuthContext.Provider value={auth}>{ loading && <LinearProgress/> }
           <Container maxWidth='lg' sx={{paddingBlock: {sm: '0.5em', lg: '1em'}}}>
             <Stack maxHeight='100vh'
               direction={{ xs: 'column', sm: 'row' }}
@@ -169,7 +173,7 @@ function App() {
                       </Card> : null}
                     </Stack>
                 <Card variant='outlined' sx={{width: '100%', padding: '1em', minHeight: '80vh', overflow: 'auto'}}>
-                  <Outlet />
+                  {!loading && <Outlet />}
                 </Card>
             </Stack>
           </Container>
