@@ -20,7 +20,7 @@
     "@mui/x-date-pickers": "^7.11.0",
     "chart.js": "^4.4.3",
     "dayjs": "^1.11.12",
-    "firebase": "^10.14.1",
+    "firebase": "^12.6.0",
     "firebaseui": "^6.1.0",
     "mongodb": "^6.6.2",
     "react": "^18.2.0",
