@@ -6,7 +6,6 @@ import { firebaseConfig } from "./config/firebaseConfig";
 import 'dayjs/locale/en-gb';
 
 const app = initializeApp(firebaseConfig);
-console.log(app)
 const auth = getAuth(app);
 
 const db = getFirestore(app);
