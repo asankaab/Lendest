@@ -22,7 +22,7 @@ export default function Layout() {
                 @media (max-width: 768px) {
                     main {
                         margin-left: 0 !important;
-                        padding: 4rem 1rem 1rem 1rem !important;
+                        padding: 5rem 1rem 1rem 1rem !important;
                     }
                 }
             `}</style>

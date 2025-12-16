@@ -89,6 +89,7 @@ export default function Transactions() {
                                 <div style={{
                                     width: '40px',
                                     height: '40px',
+                                    aspectRatio: '1',
                                     borderRadius: '50%',
                                     background: tx.type === 'lend' ? 'rgba(16, 185, 129, 0.1)' :
                                         (tx.type === 'repayment' ? 'rgba(245, 158, 11, 0.1)' :

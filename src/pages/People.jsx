@@ -115,7 +115,7 @@ export default function People() {
                         }}
                     >
                         <UserPlus size={20} />
-                        <span>New Person</span>
+                        <span className="mobile-button-text">New Person</span>
                     </button>
                     <button
                         onClick={() => setIsModalOpen(true)}
@@ -129,10 +129,18 @@ export default function People() {
                         }}
                     >
                         <Plus size={20} />
-                        <span>New Transaction</span>
+                        <span className="mobile-button-text">New Transaction</span>
                     </button>
                 </div>
             </div>
+
+            <style>{`
+                @media (max-width: 768px) {
+                    .mobile-button-text {
+                        display: none;
+                    }
+                }
+            `}</style>
 
             <div className="glass" style={{ padding: '1rem', borderRadius: 'var(--radius)', marginBottom: '2rem' }}>
                 <div className="flex items-center gap-4" style={{
