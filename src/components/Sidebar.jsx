@@ -74,7 +74,7 @@ export default function Sidebar() {
                 className={`glass ${isMobileMenuOpen ? 'mobile-open' : ''}`}
                 style={{
                     width: 'var(--sidebar-width)',
-                    height: '100vh',
+                    height: '100svh',
                     padding: '2rem',
                     display: 'flex',
                     flexDirection: 'column',
@@ -88,11 +88,11 @@ export default function Sidebar() {
                     onClick={closeMobileMenu}
                     style={{
                         position: 'absolute',
-                        top: '1rem',
-                        right: '1rem',
+                        top: '0.75rem',
+                        right: '0',
                         padding: '0.5rem',
                         aspectRatio: '1 / 1',
-                        borderRadius: 'var(--radius)',
+                        borderRadius: 'var(--radius) 0 0 var(--radius)',
                         background: 'var(--bg-secondary)',
                         border: '1px solid var(--border-color)',
                         display: 'none',
@@ -103,7 +103,7 @@ export default function Sidebar() {
                     <X size={20} />
                 </button>
 
-                <div style={{ marginBottom: '3rem', fontSize: '1.5rem', fontWeight: 'bold' }}>
+                <div style={{ marginBottom: '3rem', paddingLeft: '1rem', paddingTop: '0.25rem', fontSize: '1.5rem', fontWeight: 'bold' }}>
                     LendBook
                 </div>
 

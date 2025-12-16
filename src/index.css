@@ -70,6 +70,14 @@ button {
   padding: 0 1rem;
 }
 
+@media (max-width: 768px) {
+  .container {
+    padding: 0;
+  }
+}
+
+
+
 .flex {
   display: flex;
 }
