@@ -33,7 +33,6 @@ export default function People() {
                     name: person.name,
                     username: person.username,
                     balance: 0,
-                    email: 'N/A'
                 };
             });
 
@@ -49,7 +48,6 @@ export default function People() {
                         name: name,
                         username: username,
                         balance: 0,
-                        email: 'N/A'
                     };
                 }
 
