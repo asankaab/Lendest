@@ -14,6 +14,7 @@ export default function People() {
     const [loading, setLoading] = useState(true);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isPersonModalOpen, setIsPersonModalOpen] = useState(false);
+    const [searchQuery, setSearchQuery] = useState('');
 
     // Fetch all people and transactions
     const fetchPeople = async () => {
@@ -151,6 +152,8 @@ export default function People() {
                     <input
                         type="text"
                         placeholder="Search people..."
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
                         style={{
                             border: 'none',
                             background: 'transparent',
@@ -163,7 +166,12 @@ export default function People() {
             </div>
 
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '1.5rem' }}>
-                {people.map((person) => (
+                {people
+                    .filter((person) => {
+                        const searchLower = searchQuery.toLowerCase();
+                        return person.name.toLowerCase().includes(searchLower) || person.username.toLowerCase().includes(searchLower);
+                    })
+                    .map((person) => (
                     <div
                         key={person.id}
                         className="glass"
