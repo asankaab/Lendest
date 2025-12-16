@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { X } from 'lucide-react';
+import { ArrowDownRight, ArrowUpRight, X } from 'lucide-react';
 import { api } from '../lib/api';
 
 export default function AddTransactionModal({ isOpen, onClose, onSubmit, initialPersonName = '', initialUsername = '' }) {
@@ -116,7 +116,7 @@ export default function AddTransactionModal({ isOpen, onClose, onSubmit, initial
                 padding: '2rem',
                 borderRadius: 'var(--radius)',
                 width: '100%',
-                maxWidth: '500px',
+                maxWidth: '400px',
                 position: 'relative'
             }}>
                 <button
@@ -131,67 +131,71 @@ export default function AddTransactionModal({ isOpen, onClose, onSubmit, initial
                 <form onSubmit={handleSubmit} className="flex" style={{ flexDirection: 'column', gap: '1rem' }}>
                     <div>
                         <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: '500' }}>Type</label>
-                        <div className="flex gap-4">
-                            <button
-                                type="button"
-                                onClick={() => setFormData({ ...formData, type: 'lend' })}
-                                style={{
-                                    flex: 1,
-                                    padding: '0.75rem',
-                                    borderRadius: 'var(--radius)',
-                                    background: formData.type === 'lend' ? 'var(--success)' : 'var(--bg-secondary)',
-                                    color: formData.type === 'lend' ? 'white' : 'var(--text-secondary)',
-                                    fontWeight: 'bold',
-                                    border: formData.type === 'lend' ? 'none' : '1px solid var(--border-color)'
-                                }}
-                            >
-                                I Lent
-                            </button>
-                            <button
-                                type="button"
-                                onClick={() => setFormData({ ...formData, type: 'borrow' })}
-                                style={{
-                                    flex: 1,
-                                    padding: '0.75rem',
-                                    borderRadius: 'var(--radius)',
-                                    background: formData.type === 'borrow' ? 'var(--danger)' : 'var(--bg-secondary)',
-                                    color: formData.type === 'borrow' ? 'white' : 'var(--text-secondary)',
-                                    fontWeight: 'bold',
-                                    border: formData.type === 'borrow' ? 'none' : '1px solid var(--border-color)'
-                                }}
-                            >
-                                I Borrowed
-                            </button>
-                            <button
-                                type="button"
-                                onClick={() => setFormData({ ...formData, type: 'repayment' })}
-                                style={{
-                                    flex: 1,
-                                    padding: '0.75rem',
-                                    borderRadius: 'var(--radius)',
-                                    background: formData.type === 'repayment' ? 'var(--warning)' : 'var(--bg-secondary)',
-                                    color: formData.type === 'repayment' ? 'white' : 'var(--text-secondary)',
-                                    fontWeight: 'bold',
-                                    border: formData.type === 'repayment' ? 'none' : '1px solid var(--border-color)'
-                                }}
-                            >
-                                Got Paid
-                            </button>
-                            <button
-                                type="button"
-                                onClick={() => setFormData({ ...formData, type: 'paid_back' })}
-                                style={{
-                                    flex: 1,
-                                    padding: '0.75rem',
-                                    borderRadius: 'var(--radius)',
-                                    background: formData.type === 'paid_back' ? 'var(--danger)' : 'var(--bg-secondary)',
-                                    color: formData.type === 'paid_back' ? 'white' : 'var(--text-secondary)',
-                                    fontWeight: 'bold',
-                                    border: formData.type === 'paid_back' ? 'none' : '1px solid var(--border-color)'
-                                }}
-                            >
-                                I Paid Back
-                            </button>
+                        <div>
+                            <div className="flex gap-2" style={{marginBottom: '0.5rem'}}>
+                                <button
+                                    type="button"
+                                    onClick={() => setFormData({ ...formData, type: 'lend' })}
+                                    style={{
+                                        flex: 1,
+                                        padding: '0.75rem',
+                                        borderRadius: 'var(--radius-md)',
+                                        background: formData.type === 'lend' ? 'var(--success)' : 'var(--bg-secondary)',
+                                        color: formData.type === 'lend' ? 'white' : 'var(--text-secondary)',
+                                        fontWeight: 'bold',
+                                        border: formData.type === 'lend' ? 'none' : '1px solid var(--border-color)'
+                                    }}
+                                >
+                                    <ArrowUpRight size={16} color={formData.type === 'lend' ? 'white' : 'var(--success)'} /> Lent
+                                </button>
+                                <button
+                                    type="button"
+                                    onClick={() => setFormData({ ...formData, type: 'borrow' })}
+                                    style={{
+                                        flex: 1,
+                                        padding: '0.75rem',
+                                        borderRadius: 'var(--radius-md)',
+                                        background: formData.type === 'borrow' ? 'var(--danger)' : 'var(--bg-secondary)',
+                                        color: formData.type === 'borrow' ? 'white' : 'var(--text-secondary)',
+                                        fontWeight: 'bold',
+                                        border: formData.type === 'borrow' ? 'none' : '1px solid var(--border-color)'
+                                    }}
+                                >
+                                    <ArrowDownRight size={16} color={formData.type === 'borrow' ? 'white' : 'var(--danger)'} /> Borrowed
+                                </button>
+                            </div>
+                            <div className="flex gap-2">
+                                <button
+                                    type="button"
+                                    onClick={() => setFormData({ ...formData, type: 'repayment' })}
+                                    style={{
+                                        flex: 1,
+                                        padding: '0.75rem',
+                                        borderRadius: 'var(--radius-md)',
+                                        background: formData.type === 'repayment' ? 'var(--warning)' : 'var(--bg-secondary)',
+                                        color: formData.type === 'repayment' ? 'white' : 'var(--text-secondary)',
+                                        fontWeight: 'bold',
+                                        border: formData.type === 'repayment' ? 'none' : '1px solid var(--border-color)'
+                                    }}
+                                >
+                                    <ArrowDownRight size={16} color={formData.type === 'repayment' ? 'white' : 'var(--warning)'} /> Got Paid
+                                </button>
+                                <button
+                                    type="button"
+                                    onClick={() => setFormData({ ...formData, type: 'paid_back' })}
+                                    style={{
+                                        flex: 1,
+                                        padding: '0.75rem',
+                                        borderRadius: 'var(--radius-md)',
+                                        background: formData.type === 'paid_back' ? 'var(--accent-primary)' : 'var(--bg-secondary)',
+                                        color: formData.type === 'paid_back' ? 'white' : 'var(--text-secondary)',
+                                        fontWeight: 'bold',
+                                        border: formData.type === 'paid_back' ? 'none' : '1px solid var(--border-color)'
+                                    }}
+                                >
+                                    <ArrowUpRight size={16} color={formData.type === 'paid_back' ? 'white' : 'var(--accent-primary)'} /> Paid Back
+                                </button>
+                            </div>
                         </div>
                     </div>
 
@@ -206,7 +210,7 @@ export default function AddTransactionModal({ isOpen, onClose, onSubmit, initial
                             style={{
                                 width: '100%',
                                 padding: '0.75rem',
-                                borderRadius: 'var(--radius)',
+                                borderRadius: 'var(--radius-md)',
                                 border: '1px solid var(--border-color)',
                                 background: 'var(--bg-secondary)',
                                 color: 'var(--text-primary)'
@@ -228,7 +232,7 @@ export default function AddTransactionModal({ isOpen, onClose, onSubmit, initial
                             style={{
                                 width: '100%',
                                 padding: '0.75rem',
-                                borderRadius: 'var(--radius)',
+                                borderRadius: 'var(--radius-md)',
                                 border: '1px solid var(--border-color)',
                                 background: initialUsername ? 'rgba(0,0,0,0.1)' : 'var(--bg-secondary)',
                                 color: 'var(--text-primary)',
@@ -246,7 +250,7 @@ export default function AddTransactionModal({ isOpen, onClose, onSubmit, initial
                                 right: 0,
                                 background: 'var(--bg-card)',
                                 border: '1px solid var(--border-color)',
-                                borderRadius: 'var(--radius)',
+                                borderRadius: 'var(--radius-md)',
                                 marginTop: '4px',
                                 maxHeight: '200px',
                                 overflowY: 'auto',
@@ -284,7 +288,7 @@ export default function AddTransactionModal({ isOpen, onClose, onSubmit, initial
                             style={{
                                 width: '100%',
                                 padding: '0.75rem',
-                                borderRadius: 'var(--radius)',
+                                borderRadius: 'var(--radius-md)',
                                 border: '1px solid var(--border-color)',
                                 background: 'var(--bg-secondary)',
                                 color: 'var(--text-primary)'
@@ -306,7 +310,7 @@ export default function AddTransactionModal({ isOpen, onClose, onSubmit, initial
                             marginTop: '0.5rem',
                             width: '100%',
                             padding: '1rem',
-                            borderRadius: 'var(--radius)',
+                            borderRadius: 'var(--radius-md)',
                             background: 'var(--accent-primary)',
                             color: 'white',
                             fontWeight: 'bold'

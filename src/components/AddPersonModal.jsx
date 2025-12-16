@@ -90,7 +90,7 @@ export default function AddPersonModal({ isOpen, onClose, onSubmit }) {
                             style={{
                                 width: '100%',
                                 padding: '1rem',
-                                borderRadius: 'var(--radius)',
+                                borderRadius: 'var(--radius-md)',
                                 border: '1px solid var(--border-color)',
                                 background: 'var(--bg-secondary)',
                                 color: 'var(--text-primary)',
@@ -109,7 +109,7 @@ export default function AddPersonModal({ isOpen, onClose, onSubmit }) {
                             style={{
                                 width: '100%',
                                 padding: '1rem',
-                                borderRadius: 'var(--radius)',
+                                borderRadius: 'var(--radius-md)',
                                 border: '1px solid var(--border-color)',
                                 background: 'var(--bg-secondary)',
                                 color: 'var(--text-primary)',
@@ -135,7 +135,7 @@ export default function AddPersonModal({ isOpen, onClose, onSubmit }) {
                         style={{
                             width: '100%',
                             padding: '1rem',
-                            borderRadius: 'var(--radius)',
+                            borderRadius: 'var(--radius-md)',
                             background: 'var(--accent-primary)',
                             color: 'white',
                             fontWeight: 'bold',

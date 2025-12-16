@@ -15,6 +15,7 @@
   /* Amber 500 */
   --danger: #ef4444;
   --radius: 0.75rem;
+  --radius-md: 0.5rem;
   --header-height: 4rem;
   --sidebar-width: 16rem;
   --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
@@ -88,6 +89,18 @@ button {
 
 .justify-between {
   justify-content: space-between;
+}
+
+.gap-1 {
+  gap: .25rem;
+}
+
+.gap-2 {
+  gap: .5rem;
+}
+
+.gap-3 {
+  gap: .75rem;
 }
 
 .gap-4 {

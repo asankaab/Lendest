@@ -48,7 +48,7 @@ export default function Login() {
                         placeholder="Email"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
-                        style={{ padding: '0.75rem', borderRadius: 'var(--radius)', border: '1px solid var(--border-color)', background: 'var(--bg-secondary)', color: 'var(--text-primary)' }}
+                        style={{ padding: '0.75rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-color)', background: 'var(--bg-secondary)', color: 'var(--text-primary)' }}
                         required
                     />
                     <input
@@ -56,7 +56,7 @@ export default function Login() {
                         placeholder="Password"
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
-                        style={{ padding: '0.75rem', borderRadius: 'var(--radius)', border: '1px solid var(--border-color)', background: 'var(--bg-secondary)', color: 'var(--text-primary)' }}
+                        style={{ padding: '0.75rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-color)', background: 'var(--bg-secondary)', color: 'var(--text-primary)' }}
                         required
                     />
                     <button
@@ -64,7 +64,7 @@ export default function Login() {
                         disabled={loading}
                         style={{
                             padding: '0.75rem',
-                            borderRadius: 'var(--radius)',
+                            borderRadius: 'var(--radius-md)',
                             background: 'var(--accent-primary)',
                             color: 'white',
                             fontWeight: 'bold'
@@ -87,7 +87,7 @@ export default function Login() {
                     style={{
                         width: '100%',
                         padding: '0.75rem',
-                        borderRadius: 'var(--radius)',
+                        borderRadius: 'var(--radius-md)',
                         border: '1px solid var(--border-color)',
                         background: 'var(--bg-secondary)',
                         color: 'var(--text-primary)',

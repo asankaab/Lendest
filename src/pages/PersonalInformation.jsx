@@ -222,7 +222,7 @@ export default function PersonalInformation() {
                                 className="flex items-center gap-2"
                                 style={{
                                     padding: '0.5rem 1rem',
-                                    borderRadius: 'var(--radius)',
+                                    borderRadius: 'var(--radius-md)',
                                     background: 'var(--bg-secondary)',
                                     color: 'var(--text-primary)',
                                     border: '1px solid var(--border-color)',
@@ -246,7 +246,7 @@ export default function PersonalInformation() {
                         <div className="flex items-center gap-2" style={{
                             background: 'var(--bg-secondary)',
                             border: '1px solid var(--border-color)',
-                            borderRadius: 'var(--radius)',
+                            borderRadius: 'var(--radius-md)',
                             padding: '0.75rem'
                         }}>
                             <User size={20} style={{ color: 'var(--text-secondary)' }} />
@@ -271,7 +271,7 @@ export default function PersonalInformation() {
                         <div className="flex items-center gap-2" style={{
                             background: 'rgba(0,0,0,0.2)', // Visual cue for disabled
                             border: '1px solid var(--border-color)',
-                            borderRadius: 'var(--radius)',
+                            borderRadius: 'var(--radius-md)',
                             padding: '0.75rem',
                             cursor: 'not-allowed'
                         }}>
@@ -302,7 +302,7 @@ export default function PersonalInformation() {
                         style={{
                             marginTop: '1rem',
                             padding: '1rem',
-                            borderRadius: 'var(--radius)',
+                            borderRadius: 'var(--radius-md)',
                             background: 'var(--accent-primary)',
                             color: 'white',
                             fontWeight: 'bold',

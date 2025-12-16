@@ -43,7 +43,7 @@ export default function ConfirmationModal({ isOpen, onClose, onConfirm, title, m
                         onClick={onClose}
                         style={{
                             padding: '0.75rem 1.5rem',
-                            borderRadius: 'var(--radius)',
+                            borderRadius: 'var(--radius-md)',
                             background: 'var(--bg-secondary)',
                             color: 'var(--text-primary)',
                             fontWeight: '600'
@@ -58,7 +58,7 @@ export default function ConfirmationModal({ isOpen, onClose, onConfirm, title, m
                         }}
                         style={{
                             padding: '0.75rem 1.5rem',
-                            borderRadius: 'var(--radius)',
+                            borderRadius: 'var(--radius-md)',
                             background: 'var(--danger)',
                             color: 'white',
                             fontWeight: '600'

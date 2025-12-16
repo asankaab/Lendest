@@ -61,7 +61,7 @@ export default function RenameModal({ isOpen, onClose, onSubmit, currentName }) 
                             style={{
                                 width: '100%',
                                 padding: '0.75rem',
-                                borderRadius: 'var(--radius)',
+                                borderRadius: 'var(--radius-md)',
                                 border: '1px solid var(--border-color)',
                                 background: 'var(--bg-secondary)',
                                 color: 'var(--text-primary)',
@@ -77,7 +77,7 @@ export default function RenameModal({ isOpen, onClose, onSubmit, currentName }) 
                             onClick={onClose}
                             style={{
                                 padding: '0.75rem 1.5rem',
-                                borderRadius: 'var(--radius)',
+                                borderRadius: 'var(--radius-md)',
                                 background: 'var(--bg-secondary)',
                                 color: 'var(--text-primary)',
                                 fontWeight: '600'
@@ -89,7 +89,7 @@ export default function RenameModal({ isOpen, onClose, onSubmit, currentName }) 
                             type="submit"
                             style={{
                                 padding: '0.75rem 1.5rem',
-                                borderRadius: 'var(--radius)',
+                                borderRadius: 'var(--radius-md)',
                                 background: 'var(--accent-primary)',
                                 color: 'white',
                                 fontWeight: '600'

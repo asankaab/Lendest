@@ -56,7 +56,7 @@ export default function Transactions() {
                         onChange={(e) => setFilter(e.target.value)}
                         style={{
                             padding: '0.5rem 1rem',
-                            borderRadius: 'var(--radius)',
+                            borderRadius: 'var(--radius-md)',
                             background: 'var(--bg-secondary)',
                             color: 'var(--text-primary)',
                             border: '1px solid var(--border-color)',

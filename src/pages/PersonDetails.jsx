@@ -178,7 +178,7 @@ export default function PersonDetails() {
                         className="flex items-center gap-2"
                         style={{
                             padding: '0.75rem 1rem',
-                            borderRadius: '0.5rem',
+                            borderRadius: 'var(--radius-md)',
                             background: 'var(--accent-primary)',
                             color: 'white',
                             fontWeight: 'bold'
@@ -193,7 +193,7 @@ export default function PersonDetails() {
                             onClick={() => setIsMenuOpen(!isMenuOpen)}
                             style={{
                                 padding: '0.75rem',
-                                borderRadius: '0.5rem',
+                                borderRadius: 'var(--radius-md)',
                                 background: 'var(--bg-secondary)',
                                 color: 'var(--text-secondary)',
                                 border: '1px solid var(--border-color)',

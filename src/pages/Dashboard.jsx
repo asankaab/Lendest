@@ -62,7 +62,7 @@ export default function Dashboard() {
                     className="flex items-center gap-2"
                     style={{
                         padding: '0.75rem 1rem',
-                        borderRadius: '0.5rem',
+                        borderRadius: 'var(--radius-md)',
                         background: 'var(--accent-primary)',
                         color: 'white',
                         fontWeight: 'bold'

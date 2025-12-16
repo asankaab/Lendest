@@ -107,7 +107,7 @@ export default function People() {
                         className="flex items-center gap-2"
                         style={{
                             padding: '0.75rem 1rem',
-                            borderRadius: '0.5rem',
+                            borderRadius: 'var(--radius-md)',
                             background: 'var(--bg-secondary)',
                             color: 'var(--text-primary)',
                             fontWeight: 'bold',
@@ -122,7 +122,7 @@ export default function People() {
                         className="flex items-center gap-2"
                         style={{
                             padding: '0.75rem 1rem',
-                            borderRadius: '0.5rem',
+                            borderRadius: 'var(--radius-md)',
                             background: 'var(--accent-primary)',
                             color: 'white',
                             fontWeight: 'bold'
@@ -146,7 +146,7 @@ export default function People() {
                 <div className="flex items-center gap-4" style={{
                     background: 'var(--bg-primary)',
                     padding: '0.75rem',
-                    borderRadius: 'var(--radius)',
+                    borderRadius: 'var(--radius-md)',
                     border: '1px solid var(--border-color)'
                 }}>
                     <Search size={20} style={{ color: 'var(--text-secondary)' }} />
