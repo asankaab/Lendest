@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, ArrowUpRight, ArrowDownRight, Filter } from 'lucide-react';
 import { api } from '../lib/api';
 import { useAuth } from '../contexts/AuthContext';
+import TransactionsSkeleton from '../components/TransactionsSkeleton';
 
 export default function Transactions() {
     const { user } = useAuth();
@@ -30,7 +31,7 @@ export default function Transactions() {
         ? transactions
         : transactions.filter(tx => tx.type === filter);
 
-    if (loading) return <div className="p-8">Loading...</div>;
+    if (loading) return <TransactionsSkeleton />;
 
     return (
         <div>

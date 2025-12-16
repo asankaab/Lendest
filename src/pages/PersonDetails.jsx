@@ -7,6 +7,7 @@ import { useAuth } from '../contexts/AuthContext';
 import AddTransactionModal from '../components/AddTransactionModal';
 import ConfirmationModal from '../components/ConfirmationModal';
 import RenameModal from '../components/RenameModal';
+import PersonDetailsSkeleton from '../components/PersonDetailsSkeleton';
 
 export default function PersonDetails() {
     const { username } = useParams();
@@ -111,7 +112,7 @@ export default function PersonDetails() {
         }
     };
 
-    if (loading) return <div className="p-8">Loading...</div>;
+    if (loading) return <PersonDetailsSkeleton />;
 
     return (
         <div>
