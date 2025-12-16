@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, User, Mail, Save, Upload, X } from 'lucide-react';
 import { api } from '../lib/api';
 import { useAuth } from '../contexts/AuthContext';
+import ConfirmationModal from '../components/ConfirmationModal';
 
 export default function PersonalInformation() {
     const { user } = useAuth();
@@ -10,6 +11,7 @@ export default function PersonalInformation() {
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
     const [uploading, setUploading] = useState(false);
+    const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
     const fileInputRef = useRef(null);
     const [formData, setFormData] = useState({
         full_name: '',
@@ -100,8 +102,6 @@ export default function PersonalInformation() {
     };
 
     const handleDeleteAvatar = async () => {
-        if (!window.confirm('Are you sure you want to remove your profile picture?')) return;
-
         setUploading(true);
         setMessage('');
 
@@ -121,6 +121,13 @@ export default function PersonalInformation() {
 
     return (
         <div style={{ maxWidth: '600px', margin: '0 auto' }}>
+            <ConfirmationModal
+                isOpen={isDeleteModalOpen}
+                onClose={() => setIsDeleteModalOpen(false)}
+                onConfirm={handleDeleteAvatar}
+                title="Delete Profile Picture"
+                message="Are you sure you want to remove your profile picture?"
+            />
             <button
                 onClick={() => navigate('/settings')}
                 className="flex items-center gap-2"
@@ -182,7 +189,7 @@ export default function PersonalInformation() {
                             {formData.avatar_url && (
                                 <button
                                     type="button"
-                                    onClick={handleDeleteAvatar}
+                                    onClick={() => setIsDeleteModalOpen(true)}
                                     disabled={uploading}
                                     style={{
                                         position: 'absolute',
