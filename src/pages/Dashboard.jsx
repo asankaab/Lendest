@@ -120,8 +120,8 @@ export default function Dashboard() {
             <div className="glass" style={{ padding: '2rem', borderRadius: 'var(--radius)', marginBottom: '2rem' }}>
                 <h2 style={{ fontSize: '1.25rem', marginBottom: '1.5rem', fontWeight: 'bold' }}>Financial Trend</h2>
                 <div style={{ height: '300px', width: '100%' }}>
-                    <ResponsiveContainer width="100%" height="100%">
-                        <AreaChart data={chartData} style={{minWidth: '300px', minHeight: '200px'}}>
+                    <ResponsiveContainer width="100%" height={300}>
+                        <AreaChart data={chartData} style={{minWidth: '300px', minHeight: '100px'}}>
                             <defs>
                                 <linearGradient id="colorAmount" x1="0" y1="0" x2="0" y2="1">
                                     <stop offset="5%" stopColor="var(--accent-primary)" stopOpacity={0.8} />
