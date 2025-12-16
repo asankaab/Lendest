@@ -190,6 +190,8 @@ export default function PersonalInformation() {
                                         right: '-5px',
                                         width: '24px',
                                         height: '24px',
+                                        aspectRatio: '1',
+                                        minHeight: '24px',
                                         borderRadius: '50%',
                                         background: 'var(--danger)',
                                         color: 'white',

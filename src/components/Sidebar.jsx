@@ -33,24 +33,27 @@ export default function Sidebar() {
 
     return (
         <>
-            {/* Mobile Menu Button */}
-            <button
-                onClick={toggleMobileMenu}
-                style={{
-                    position: 'fixed',
-                    top: '1rem',
-                    left: '1rem',
-                    zIndex: 1001,
-                    padding: '0.75rem',
-                    borderRadius: 'var(--radius)',
-                    background: 'var(--bg-card)',
-                    border: '1px solid var(--border-color)',
-                    display: 'none'
-                }}
-                className="mobile-menu-btn"
-            >
-                {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
-            </button>
+            {/* Mobile Menu Button - Hidden when sidebar is open */}
+            {!isMobileMenuOpen && (
+                <button
+                    onClick={toggleMobileMenu}
+                    style={{
+                        position: 'fixed',
+                        top: '1rem',
+                        left: '1rem',
+                        zIndex: 1001,
+                        padding: '0.75rem',
+                        aspectRatio: '1',
+                        borderRadius: 'var(--radius)',
+                        background: 'var(--bg-card)',
+                        border: '1px solid var(--border-color)',
+                        display: 'none'
+                    }}
+                    className="mobile-menu-btn"
+                >
+                    <Menu size={24} />
+                </button>
+            )}
 
             {/* Overlay for mobile */}
             {isMobileMenuOpen && (
@@ -80,6 +83,26 @@ export default function Sidebar() {
                     top: 0
                 }}
             >
+                {/* Close button - only visible on mobile when sidebar is open */}
+                <button
+                    onClick={closeMobileMenu}
+                    style={{
+                        position: 'absolute',
+                        top: '1rem',
+                        right: '1rem',
+                        padding: '0.5rem',
+                        aspectRatio: '1 / 1',
+                        borderRadius: 'var(--radius)',
+                        background: 'var(--bg-secondary)',
+                        border: '1px solid var(--border-color)',
+                        display: 'none',
+                        zIndex: 10
+                    }}
+                    className="mobile-close-btn"
+                >
+                    <X size={20} />
+                </button>
+
                 <div style={{ marginBottom: '3rem', fontSize: '1.5rem', fontWeight: 'bold' }}>
                     LendBook
                 </div>
@@ -134,6 +157,9 @@ export default function Sidebar() {
                         display: block !important;
                     }
                     .mobile-overlay {
+                        display: block !important;
+                    }
+                    aside.mobile-open .mobile-close-btn {
                         display: block !important;
                     }
                 }

@@ -185,7 +185,7 @@ export default function PersonDetails() {
                         }}
                     >
                         <Plus size={20} />
-                        <span>Add Transaction</span>
+                        <span className="mobile-button-text">Add Transaction</span>
                     </button>
 
                     <div style={{ position: 'relative' }}>
@@ -258,6 +258,14 @@ export default function PersonDetails() {
                 </div>
             </div>
 
+            <style>{`
+                @media (max-width: 768px) {
+                    .mobile-button-text {
+                        display: none;
+                    }
+                }
+            `}</style>
+
             <div className="glass" style={{ padding: '2rem', borderRadius: 'var(--radius)' }}>
                 <h2 style={{ fontSize: '1.25rem', fontWeight: 'bold', marginBottom: '1.5rem' }}>Transaction History</h2>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
@@ -272,6 +280,7 @@ export default function PersonDetails() {
                                 <div style={{
                                     width: '40px',
                                     height: '40px',
+                                    aspectRatio: '1',
                                     borderRadius: '50%',
                                     background: tx.type === 'lend' ? 'rgba(16, 185, 129, 0.1)' : 'rgba(239, 68, 68, 0.1)',
                                     display: 'flex',
