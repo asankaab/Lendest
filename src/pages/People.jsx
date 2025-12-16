@@ -6,6 +6,7 @@ import { api } from '../lib/api';
 import { useAuth } from '../contexts/AuthContext';
 import AddTransactionModal from '../components/AddTransactionModal';
 import AddPersonModal from '../components/AddPersonModal';
+import PeopleSkeleton from '../components/PeopleSkeleton';
 
 export default function People() {
     const { user } = useAuth();
@@ -82,7 +83,7 @@ export default function People() {
         await fetchPeople();
     };
 
-    if (loading) return <div className="p-8">Loading...</div>;
+    if (loading) return <PeopleSkeleton />;
 
     return (
         <div>

@@ -5,6 +5,7 @@ import { ArrowUpRight, ArrowDownRight, DollarSign, Plus } from 'lucide-react';
 import { api } from '../lib/api';
 import { useAuth } from '../contexts/AuthContext';
 import AddTransactionModal from '../components/AddTransactionModal';
+import DashboardSkeleton from '../components/DashboardSkeleton';
 
 export default function Dashboard() {
     const { user } = useAuth();
@@ -45,7 +46,7 @@ export default function Dashboard() {
     // Transform transactions for chart (group by month - simplified for now)
     // const chartData = [ ... ] // Removed hardcoded data
 
-    if (loading) return <div className="p-8">Loading...</div>;
+    if (loading) return <DashboardSkeleton />;
 
     return (
         <div>
