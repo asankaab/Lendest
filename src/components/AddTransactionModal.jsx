@@ -6,7 +6,6 @@ export default function AddTransactionModal({ isOpen, onClose, onSubmit, initial
     const [formData, setFormData] = useState({
         type: 'lend',
         amount: '',
-        person_name: initialPersonName,
         username: initialUsername,
         description: ''
     });
@@ -24,7 +23,6 @@ export default function AddTransactionModal({ isOpen, onClose, onSubmit, initial
             // Reset form if initial props change or on reopen (though usually unmounted, but good practice)
             setFormData(prev => ({
                 ...prev,
-                person_name: initialPersonName,
                 username: initialUsername
             }));
         }
@@ -54,15 +52,14 @@ export default function AddTransactionModal({ isOpen, onClose, onSubmit, initial
 
     const handleUsernameChange = (e) => {
         const val = e.target.value;
-        setFormData({ ...formData, username: val, person_name: '' }); // Clear name if typing manual username
+        setFormData({ ...formData, username: val }); // Clear name if typing manual username
         setShowSuggestions(true);
     };
 
     const selectPerson = (person) => {
         setFormData({
             ...formData,
-            username: person.username,
-            person_name: person.name
+            username: person.username
         });
         setShowSuggestions(false);
     };
@@ -84,7 +81,6 @@ export default function AddTransactionModal({ isOpen, onClose, onSubmit, initial
             setFormData({
                 type: 'lend',
                 amount: '',
-                person_name: initialPersonName || '',
                 username: initialUsername || '',
                 description: ''
             });

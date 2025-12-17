@@ -87,7 +87,7 @@ export const api = {
                 ...transactionData,
                 user_id: userId,
                 person_id: personId,
-                person_name: name
+                person_username: username
             }])
             .select()
             .single();
@@ -124,7 +124,7 @@ export const api = {
         const { data, error } = await supabase
             .from('profiles')
             .select('*')
-            .eq('id', userId)
+            .eq('user_id', userId)
             .single();
         if (error) throw error;
         return data;
@@ -133,7 +133,7 @@ export const api = {
     updateProfile: async (userId, updates) => {
         const { data, error } = await supabase
             .from('profiles')
-            .upsert({ id: userId, ...updates })
+            .upsert({ user_id: userId, ...updates })
             .select()
             .single();
         if (error) throw error;
@@ -144,7 +144,7 @@ export const api = {
         const { data, error } = await supabase
             .from('profiles')
             .update({ currency })
-            .eq('id', userId)
+            .eq('user_id', userId)
                 .select()
             .single();
         if (error) throw error;

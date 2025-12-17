@@ -40,8 +40,8 @@ export default function CurrencySettings() {
                             key={curr.code}
                             onClick={async() => 
                                 {
-                                    const update = await api.updateCurrency(user.id, curr.code);
-                                    setCurrency(update.currency);
+                                    const update = await api.updateCurrency(user.id, curr.code.toLowerCase());
+                                    setCurrency(update.currency.toUpperCase());
                                 }
                             }
                             style={{

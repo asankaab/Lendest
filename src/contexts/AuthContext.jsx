@@ -29,7 +29,7 @@ export const AuthProvider = ({ children }) => {
         const loadProfile = async () => {
             if (!user?.id) return;
             const profile = await api.getProfile(user?.id);
-            setCurrency(profile.currency);
+            setCurrency(profile.currency.toUpperCase());
         };
 
         loadProfile();
