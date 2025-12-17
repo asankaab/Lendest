@@ -10,6 +10,9 @@ export const useAuth = () => useContext(AuthContext);
 export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null);
     const [loading, setLoading] = useState(true);
+    const [currency, setCurrency] = useState(() => {
+        return localStorage.getItem('lendbook_currency') || 'USD';
+    });
 
     useEffect(() => {
         // Check active sessions and sets the user
@@ -33,7 +36,12 @@ export const AuthProvider = ({ children }) => {
         signUpWithPassword: (email, password) => supabase.auth.signUp({ email, password }),
         signOut: () => supabase.auth.signOut(),
         user,
-        loading
+        loading,
+        currency,
+        setCurrency: (newCurrency) => {
+            setCurrency(newCurrency);
+            localStorage.setItem('lendbook_currency', newCurrency);
+        }
     };
 
     return (

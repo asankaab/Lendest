@@ -11,6 +11,7 @@ import PersonDetails from './pages/PersonDetails';
 import Transactions from './pages/Transactions';
 import Settings from './pages/Settings';
 import PersonalInformation from './pages/PersonalInformation';
+import CurrencySettings from './pages/CurrencySettings';
 
 function App() {
     return (
@@ -26,6 +27,7 @@ function App() {
                         <Route path="/transactions" element={<Transactions />} />
                         <Route path="/settings" element={<Settings />} />
                         <Route path="/settings/personal-information" element={<PersonalInformation />} />
+                        <Route path="/settings/currency" element={<CurrencySettings />} />
                     </Route>
 
                     <Route path="*" element={<Navigate to="/" replace />} />

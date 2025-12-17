@@ -4,12 +4,13 @@ import { UserPlus, Search, Plus } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { api } from '../lib/api';
 import { useAuth } from '../contexts/AuthContext';
+import { formatCurrency } from '../lib/currencyFormatter';
 import AddTransactionModal from '../components/AddTransactionModal';
 import AddPersonModal from '../components/AddPersonModal';
 import PeopleSkeleton from '../components/PeopleSkeleton';
 
 export default function People() {
-    const { user } = useAuth();
+    const { user, currency } = useAuth();
     const navigate = useNavigate();
     const [people, setPeople] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -206,7 +207,7 @@ export default function People() {
                                 fontWeight: 'bold',
                                 color: person.balance > 0 ? 'var(--success)' : (person.balance < 0 ? 'var(--danger)' : 'var(--text-secondary)')
                             }}>
-                                {person.balance > 0 ? `+ $${person.balance.toFixed(2)}` : (person.balance < 0 ? `- $${Math.abs(person.balance).toFixed(2)}` : '$0.00')}
+                                {person.balance > 0 ? `+ ${formatCurrency(person.balance, currency)}` : (person.balance < 0 ? `- ${formatCurrency(Math.abs(person.balance), currency)}` : formatCurrency(0, currency))}
                             </span>
                         </div>
                     </div>

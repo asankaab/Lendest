@@ -140,6 +140,17 @@ export const api = {
         return data;
     },
 
+    updateCurrency: async (userId, currency) => {
+        const { data, error } = await supabase
+            .from('profiles')
+            .update({ currency })
+            .eq('id', userId)
+                .select()
+            .single();
+        if (error) throw error;
+        return data;
+    },
+
     uploadAvatar: async (userId, file) => {
         const fileExt = file.name.split('.').pop();
         const fileName = `${userId}/avatar.${fileExt}`;

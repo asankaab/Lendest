@@ -4,6 +4,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, ArrowUpRight, ArrowDownRight, Plus, Trash2, Settings, MoreHorizontal } from 'lucide-react';
 import { api } from '../lib/api';
 import { useAuth } from '../contexts/AuthContext';
+import { formatCurrency } from '../lib/currencyFormatter';
 import AddTransactionModal from '../components/AddTransactionModal';
 import ConfirmationModal from '../components/ConfirmationModal';
 import RenameModal from '../components/RenameModal';
@@ -11,7 +12,7 @@ import PersonDetailsSkeleton from '../components/PersonDetailsSkeleton';
 
 export default function PersonDetails() {
     const { username } = useParams();
-    const { user } = useAuth();
+    const { user, currency } = useAuth();
     const navigate = useNavigate();
     const [transactions, setTransactions] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -169,7 +170,7 @@ export default function PersonDetails() {
                             color: balance > 0 ? 'var(--success)' : (balance < 0 ? 'var(--danger)' : 'var(--text-primary)'),
                             fontWeight: 'bold'
                         }}>
-                            {balance > 0 ? `+ $${balance.toFixed(2)}` : (balance < 0 ? `- $${Math.abs(balance).toFixed(2)}` : '$0.00')}
+                            {balance > 0 ? `+ ${formatCurrency(balance, currency)}` : (balance < 0 ? `- ${formatCurrency(Math.abs(balance), currency)}` : formatCurrency(0, currency))}
                         </span>
                     </div>
                 </div>
@@ -313,7 +314,7 @@ export default function PersonDetails() {
                                         (tx.type === 'repayment' ? 'var(--warning)' :
                                             (tx.type === 'paid_back' ? 'var(--danger)' : 'var(--danger)'))
                                 }}>
-                                    {tx.type === 'lend' ? '+' : '-'} ${parseFloat(tx.amount).toFixed(2)}
+                                    {tx.type === 'lend' ? '+' : '-'} {formatCurrency(tx.amount, currency)}
                                 </div>
                                 <button
                                     onClick={() => confirmDelete(tx.id)}

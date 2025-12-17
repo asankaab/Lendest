@@ -3,10 +3,11 @@ import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, ArrowUpRight, ArrowDownRight, Filter } from 'lucide-react';
 import { api } from '../lib/api';
 import { useAuth } from '../contexts/AuthContext';
+import { formatCurrency } from '../lib/currencyFormatter';
 import TransactionsSkeleton from '../components/TransactionsSkeleton';
 
 export default function Transactions() {
-    const { user } = useAuth();
+    const { user, currency } = useAuth();
     const navigate = useNavigate();
     const [transactions, setTransactions] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -128,7 +129,7 @@ export default function Transactions() {
                                     (tx.type === 'repayment' ? 'var(--warning)' :
                                         (tx.type === 'paid_back' ? 'var(--danger)' : 'var(--danger)'))
                             }}>
-                                {tx.type === 'lend' ? '+' : '-'} ${parseFloat(tx.amount).toFixed(2)}
+                                {tx.type === 'lend' ? '+' : '-'} {formatCurrency(tx.amount, currency)}
                             </div>
                         </div>
                     ))}

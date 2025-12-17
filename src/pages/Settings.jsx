@@ -36,7 +36,7 @@ export default function Settings() {
             title: 'Financial',
             icon: Wallet,
             items: [
-                { label: 'Currency', path: null },
+                { label: 'Currency', path: '/settings/currency' },
                 { label: 'Default Payment Method', path: null },
                 { label: 'Export Data', path: null }
             ]

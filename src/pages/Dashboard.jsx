@@ -4,11 +4,12 @@ import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContai
 import { ArrowUpRight, ArrowDownRight, DollarSign, Plus } from 'lucide-react';
 import { api } from '../lib/api';
 import { useAuth } from '../contexts/AuthContext';
+import { formatCurrency } from '../lib/currencyFormatter';
 import AddTransactionModal from '../components/AddTransactionModal';
 import DashboardSkeleton from '../components/DashboardSkeleton';
 
 export default function Dashboard() {
-    const { user } = useAuth();
+    const { user, currency } = useAuth();
     const navigate = useNavigate();
     const [transactions, setTransactions] = useState([]);
     const [stats, setStats] = useState({ net: 0, youOwe: 0, owedToYou: 0 });
@@ -82,7 +83,7 @@ export default function Dashboard() {
                         <DollarSign size={20} style={{ color: 'var(--accent-primary)' }} />
                     </div>
                     <div style={{ fontSize: '2rem', fontWeight: 'bold' }}>
-                        ${stats.net.toLocaleString()}
+                        {formatCurrency(stats.net, currency)}
                     </div>
                     <div className="flex items-center gap-4" style={{ marginTop: '0.5rem', fontSize: '0.875rem', color: 'var(--success)' }}>
                         <ArrowUpRight size={16} />
@@ -96,7 +97,7 @@ export default function Dashboard() {
                         <ArrowUpRight size={20} style={{ color: 'var(--success)' }} />
                     </div>
                     <div style={{ fontSize: '2rem', fontWeight: 'bold' }}>
-                        ${stats.owedToYou.toLocaleString()}
+                        {formatCurrency(stats.owedToYou, currency)}
                     </div>
                     <div style={{ marginTop: '0.5rem', fontSize: '0.875rem', color: 'var(--text-secondary)' }}>
                         From people
@@ -109,7 +110,7 @@ export default function Dashboard() {
                         <ArrowDownRight size={20} style={{ color: 'var(--danger)' }} />
                     </div>
                     <div style={{ fontSize: '2rem', fontWeight: 'bold' }}>
-                        ${stats.youOwe.toLocaleString()}
+                        {formatCurrency(stats.youOwe, currency)}
                     </div>
                     <div style={{ marginTop: '0.5rem', fontSize: '0.875rem', color: 'var(--text-secondary)' }}>
                         To people
@@ -201,7 +202,7 @@ export default function Dashboard() {
                                     (tx.type === 'repayment' ? 'var(--warning)' :
                                         (tx.type === 'paid_back' ? 'var(--danger)' : 'var(--danger)'))
                             }}>
-                                {tx.type === 'lend' ? '+' : '-'} ${parseFloat(tx.amount).toFixed(2)}
+                                {tx.type === 'lend' ? '+' : '-'} {formatCurrency(tx.amount, currency)}
                             </div>
                         </div>
                     ))}
