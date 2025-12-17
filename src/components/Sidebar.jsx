@@ -74,7 +74,7 @@ export default function Sidebar() {
                 className={`glass ${isMobileMenuOpen ? 'mobile-open' : ''}`}
                 style={{
                     width: 'var(--sidebar-width)',
-                    height: '100svh',
+                    height: '100dvh',
                     padding: '2rem',
                     display: 'flex',
                     flexDirection: 'column',
