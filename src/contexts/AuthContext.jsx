@@ -1,6 +1,7 @@
 
 import { createContext, useContext, useEffect, useState } from 'react';
 import { supabase } from '../lib/supabase';
+import { api } from '../lib/api';
 
 const AuthContext = createContext({});
 
@@ -10,9 +11,7 @@ export const useAuth = () => useContext(AuthContext);
 export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null);
     const [loading, setLoading] = useState(true);
-    const [currency, setCurrency] = useState(() => {
-        return localStorage.getItem('lendbook_currency') || 'USD';
-    });
+    const [currency, setCurrency] = useState('USD');
 
     useEffect(() => {
         // Check active sessions and sets the user
@@ -27,8 +26,19 @@ export const AuthProvider = ({ children }) => {
             setLoading(false);
         });
 
-        return () => subscription.unsubscribe();
-    }, []);
+        const loadProfile = async () => {
+            if (!user?.id) return;
+            const profile = await api.getProfile(user?.id);
+            setCurrency(profile.currency);
+        };
+
+        loadProfile();
+
+        return () => {
+            subscription.unsubscribe();
+            loadProfile();
+        };
+    }, [user?.id]);
 
     const value = {
         signInWithGoogle: () => supabase.auth.signInWithOAuth({ provider: 'google' }),
@@ -40,7 +50,6 @@ export const AuthProvider = ({ children }) => {
         currency,
         setCurrency: (newCurrency) => {
             setCurrency(newCurrency);
-            localStorage.setItem('lendbook_currency', newCurrency);
         }
     };
 
