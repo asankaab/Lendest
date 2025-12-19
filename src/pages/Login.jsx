@@ -1,16 +1,22 @@
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
 
 export default function Login() {
-    const { signInWithPassword, signUpWithPassword, signInWithGoogle } = useAuth();
+    const { signInWithPassword, signUpWithPassword, signInWithGoogle, user, loading: authLoading } = useAuth();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [isSignUp, setIsSignUp] = useState(false);
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
+
+    useEffect(() => {
+        if (!authLoading && user) {
+            navigate('/');
+        }
+    }, [authLoading, user, navigate]);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
