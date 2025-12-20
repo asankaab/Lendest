@@ -118,7 +118,7 @@ export default function Transactions() {
                                         </div>
                                     )}
                                     <div style={{ fontSize: '0.875rem', color: 'var(--text-secondary)', marginTop: '0.25rem' }}>
-                                        {new Date(tx.created_at).toLocaleDateString()} at {new Date(tx.created_at).toLocaleTimeString()}
+                                        {new Date(tx.created_at).toLocaleDateString()} - {new Date(tx.created_at).toLocaleTimeString()}
                                     </div>
                                 </div>
                             </div>
@@ -129,7 +129,7 @@ export default function Transactions() {
                                     (tx.type === 'repayment' ? 'var(--warning)' :
                                         (tx.type === 'paid_back' ? 'var(--danger)' : 'var(--danger)'))
                             }}>
-                                {tx.type === 'lend' ? '+' : '-'} {formatCurrency(tx.amount, currency)}
+                                <small>{tx.type === 'lend' ? '+' : '-'}</small>{formatCurrency(tx.amount, currency)}
                             </div>
                         </div>
                     ))}

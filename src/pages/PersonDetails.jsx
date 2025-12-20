@@ -303,7 +303,7 @@ export default function PersonDetails() {
                                         )}
                                     </div>
                                     <div style={{ fontSize: '0.875rem', color: 'var(--text-secondary)' }}>
-                                        {new Date(tx.created_at).toLocaleDateString()}
+                                        {new Date(tx.created_at).toLocaleDateString()} - {new Date(tx.created_at).toLocaleTimeString()}
                                     </div>
                                 </div>
                             </div>
@@ -314,7 +314,7 @@ export default function PersonDetails() {
                                         (tx.type === 'repayment' ? 'var(--warning)' :
                                             (tx.type === 'paid_back' ? 'var(--danger)' : 'var(--danger)'))
                                 }}>
-                                    {tx.type === 'lend' ? '+' : '-'} {formatCurrency(tx.amount, currency)}
+                                    <small>{tx.type === 'lend' ? '+' : '-'}</small>{formatCurrency(tx.amount, currency)}
                                 </div>
                                 <button
                                     onClick={() => confirmDelete(tx.id)}
