@@ -41,7 +41,7 @@ export const AuthProvider = ({ children }) => {
     }, [user?.id]);
 
     const value = {
-        signInWithGoogle: () => supabase.auth.signInWithOAuth({ provider: 'google', redirectTo: 'http://localhost:5173' }),
+        signInWithGoogle: () => supabase.auth.signInWithOAuth({ provider: 'google', options: { redirectTo: import.meta.env.VITE_SITE_URL } }),
         signInWithPassword: (email, password) => supabase.auth.signInWithPassword({ email, password }),
         signUpWithPassword: (email, password) => supabase.auth.signUp({ email, password }),
         signOut: () => supabase.auth.signOut(),
