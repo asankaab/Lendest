@@ -27,7 +27,7 @@ export default function Settings() {
             title: 'Security',
             icon: Shield,
             items: [
-                { label: 'Password', path: null },
+                { label: 'Passkeys', path: '/settings/passkeys' },
                 { label: 'Two-Factor Authentication', path: null },
                 { label: 'Connected Devices', path: null }
             ]

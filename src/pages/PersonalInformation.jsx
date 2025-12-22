@@ -2,11 +2,10 @@ import { useEffect, useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, User, Mail, Save, Upload, X } from 'lucide-react';
 import { api } from '../lib/api';
-import { useAuth } from '../contexts/AuthContext';
 import ConfirmationModal from '../components/ConfirmationModal';
 
 export default function PersonalInformation() {
-    const { user } = useAuth();
+    const { user } = null;
     const navigate = useNavigate();
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);

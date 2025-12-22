@@ -3,18 +3,20 @@ import { useNavigate } from 'react-router-dom';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { ArrowUpRight, ArrowDownRight, DollarSign, Plus } from 'lucide-react';
 import { api } from '../lib/api';
-import { useAuth } from '../contexts/AuthContext';
 import { formatCurrency } from '../lib/currencyFormatter';
 import AddTransactionModal from '../components/AddTransactionModal';
 import DashboardSkeleton from '../components/DashboardSkeleton';
 
 export default function Dashboard() {
-    const { user, currency } = useAuth();
     const navigate = useNavigate();
     const [transactions, setTransactions] = useState([]);
     const [stats, setStats] = useState({ net: 0, youOwe: 0, owedToYou: 0 });
     const [loading, setLoading] = useState(true);
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const currency = 'lkr';
+
+    const { user} = null;
+    console.log(user);
 
     const [chartData, setChartData] = useState([]);
 

@@ -1,21 +1,11 @@
 import { NavLink } from 'react-router-dom';
 import { LayoutDashboard, Users, Settings, LogOut, Sun, Moon, Menu, X } from 'lucide-react';
-import { useAuth } from '../contexts/AuthContext';
-import { useEffect, useState } from 'react';
+import { useContext, useState } from 'react';
+import { ThemeContext } from '../contexts/AppContext';
 
 export default function Sidebar() {
-    const { signOut } = useAuth();
-    const [theme, setTheme] = useState(localStorage.getItem('theme') || 'dark');
+    const { theme, toggleTheme } = useContext(ThemeContext);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-
-    useEffect(() => {
-        document.documentElement.setAttribute('data-theme', theme);
-        localStorage.setItem('theme', theme);
-    }, [theme]);
-
-    const toggleTheme = () => {
-        setTheme(prev => prev === 'dark' ? 'light' : 'dark');
-    };
 
     const toggleMobileMenu = () => {
         setIsMobileMenuOpen(prev => !prev);
@@ -141,7 +131,7 @@ export default function Sidebar() {
                     </button>
 
                     <button
-                        onClick={signOut}
+                        onClick={logout}
                         className="flex items-center gap-4"
                         style={{ padding: '0.75rem 1rem', borderRadius: 'var(--radius)', color: 'var(--danger)' }}
                     >
