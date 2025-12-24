@@ -2,9 +2,9 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, ArrowUpRight, ArrowDownRight, Filter } from 'lucide-react';
 import { api } from '../lib/api';
-import { useAuth } from '../contexts/AuthContext';
 import { formatCurrency } from '../lib/currencyFormatter';
 import TransactionsSkeleton from '../components/TransactionsSkeleton';
+import { useAuth } from '../hooks/useAuth';
 
 export default function Transactions() {
     const { user, currency } = useAuth();

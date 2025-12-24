@@ -1,8 +1,8 @@
-import { useAuth } from '../contexts/AuthContext';
 import { ArrowLeft } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { currencyValues } from '../lib/currencyFormatter';
 import { api } from '../lib/api';
+import { useAuth } from '../hooks/useAuth';
 
 export default function CurrencySettings() {
     const { user, currency, setCurrency } = useAuth();

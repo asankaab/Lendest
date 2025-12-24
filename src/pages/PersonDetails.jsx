@@ -3,12 +3,12 @@ import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, ArrowUpRight, ArrowDownRight, Plus, Trash2, Settings, MoreHorizontal } from 'lucide-react';
 import { api } from '../lib/api';
-import { useAuth } from '../contexts/AuthContext';
 import { formatCurrency } from '../lib/currencyFormatter';
 import AddTransactionModal from '../components/AddTransactionModal';
 import ConfirmationModal from '../components/ConfirmationModal';
 import RenameModal from '../components/RenameModal';
 import PersonDetailsSkeleton from '../components/PersonDetailsSkeleton';
+import { useAuth } from '../hooks/useAuth';
 
 export default function PersonDetails() {
     const { username } = useParams();

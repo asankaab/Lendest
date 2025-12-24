@@ -1,7 +1,7 @@
 
 import { useState, useEffect } from 'react';
-import { useAuth } from '../contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../hooks/useAuth';
 
 export default function Login() {
     const { signInWithPassword, signUpWithPassword, signInWithGoogle, user, loading: authLoading } = useAuth();

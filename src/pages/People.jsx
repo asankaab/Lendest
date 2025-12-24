@@ -3,11 +3,11 @@ import { useEffect, useState } from 'react';
 import { UserPlus, Search, Plus } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { api } from '../lib/api';
-import { useAuth } from '../contexts/AuthContext';
 import { formatCurrency } from '../lib/currencyFormatter';
 import AddTransactionModal from '../components/AddTransactionModal';
 import AddPersonModal from '../components/AddPersonModal';
 import PeopleSkeleton from '../components/PeopleSkeleton';
+import { useAuth } from '../hooks/useAuth';
 
 export default function People() {
     const { user, currency } = useAuth();

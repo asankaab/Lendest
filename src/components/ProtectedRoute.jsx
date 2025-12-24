@@ -1,9 +1,10 @@
 
+import { useContext } from 'react';
 import { Navigate } from 'react-router-dom';
-import { useAuth } from '../contexts/AuthContext';
+import { AuthContext } from '../context/context';
 
 export default function ProtectedRoute({ children }) {
-    const { user, loading } = useAuth();
+    const { user, loading } = useContext(AuthContext);
 
     if (loading) {
         return <div className="flex items-center center" style={{ height: '100vh', justifyContent: 'center' }}>Loading...</div>;
