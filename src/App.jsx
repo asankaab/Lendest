@@ -1,6 +1,5 @@
 
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-import { AuthProvider } from './contexts/AuthContext';
 import ProtectedRoute from './components/ProtectedRoute';
 import Layout from './components/Layout';
 import Login from './pages/Login';
@@ -12,6 +11,7 @@ import Transactions from './pages/Transactions';
 import Settings from './pages/Settings';
 import PersonalInformation from './pages/PersonalInformation';
 import CurrencySettings from './pages/CurrencySettings';
+import { AuthProvider } from './contexts/AuthProvider';
 
 function App() {
     return (
@@ -19,7 +19,6 @@ function App() {
             <AuthProvider>
                 <Routes>
                     <Route path="/login" element={<Login />} />
-
                     <Route element={<ProtectedRoute><Layout /></ProtectedRoute>}>
                         <Route path="/" element={<Dashboard />} />
                         <Route path="/people" element={<People />} />
@@ -29,7 +28,6 @@ function App() {
                         <Route path="/settings/personal-information" element={<PersonalInformation />} />
                         <Route path="/settings/currency" element={<CurrencySettings />} />
                     </Route>
-
                     <Route path="*" element={<Navigate to="/" replace />} />
                 </Routes>
             </AuthProvider>

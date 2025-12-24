@@ -1,12 +1,8 @@
 
-import { createContext, useContext, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { supabase } from '../lib/supabase';
 import { api } from '../lib/api';
-
-const AuthContext = createContext({});
-
-// eslint-disable-next-line react-refresh/only-export-components
-export const useAuth = () => useContext(AuthContext);
+import { AuthContext } from './context';
 
 export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null);
