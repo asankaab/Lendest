@@ -7,6 +7,7 @@ import { formatCurrency } from '../lib/currencyFormatter';
 import AddTransactionModal from '../components/AddTransactionModal';
 import AddPersonModal from '../components/AddPersonModal';
 import PeopleSkeleton from '../components/PeopleSkeleton';
+import { useAuth0 } from '@auth0/auth0-react';
 
 export default function People() {
     const navigate = useNavigate();
@@ -15,6 +16,8 @@ export default function People() {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isPersonModalOpen, setIsPersonModalOpen] = useState(false);
     const [searchQuery, setSearchQuery] = useState('');
+    const { user } = useAuth0();
+
 
     // Fetch all people and transactions
     const fetchPeople = async () => {

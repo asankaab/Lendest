@@ -2,9 +2,11 @@ import { NavLink } from 'react-router-dom';
 import { LayoutDashboard, Users, Settings, LogOut, Sun, Moon, Menu, X } from 'lucide-react';
 import { useContext, useState } from 'react';
 import { ThemeContext } from '../contexts/AppContext';
+import { useAuth0 } from '@auth0/auth0-react';
 
 export default function Sidebar() {
     const { theme, toggleTheme } = useContext(ThemeContext);
+    const { logout } = useAuth0();
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
     const toggleMobileMenu = () => {

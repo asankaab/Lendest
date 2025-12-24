@@ -1,7 +1,7 @@
-
 export const variables = {
     projectId: import.meta.env.VITE_PROJECT_ID,
-    apiSecret: import.meta.env.VITE_API_SECRET,
-    webhookUser: import.meta.env.VITE_WEBHOOK_USERNAME,
-    webhookPass: import.meta.env.VITE_WEBHOOK_PASSWORD
+    supabaseUrl: import.meta.env.VITE_SUPABASE_URL,
+    supabasePubKey: import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
+    auth0Domain: import.meta.env.VITE_AUTH0_DOMAIN,
+    clientId: import.meta.env.VITE_AUTH0_CLIENT_ID
 }

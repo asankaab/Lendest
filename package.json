@@ -10,8 +10,11 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@auth0/auth0-react": "^2.11.0",
+    "@auth0/auth0-spa-js": "^2.11.0",
     "@supabase/supabase-js": "^2.87.1",
     "date-fns": "^4.1.0",
+    "jsonwebtoken": "^9.0.3",
     "lucide-react": "^0.559.0",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",

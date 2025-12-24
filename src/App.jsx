@@ -11,17 +11,17 @@ import Settings from './pages/Settings';
 import PersonalInformation from './pages/PersonalInformation';
 import CurrencySettings from './pages/CurrencySettings';
 import Passkeys from './pages/Passkeys';
-import { useContext } from 'react';
-import { ThemeContext } from './contexts/AppContext';
+import { Auth0Provider } from '@auth0/auth0-react';
+import { variables } from './lib/env';
 
 function App() {
 
-    const theme = useContext(ThemeContext);
-    
-    const mode = theme.theme === 'dark' ? 'on' : 'off';
-
     return (
         <BrowserRouter>
+                <Auth0Provider domain={variables.auth0Domain} clientId={variables.clientId}
+                        authorizationParams={{
+                            redirect_uri: window.location.origin
+                        }}>
                     <Routes>
                         <Route path="/login" element={<Login />} />
                         <Route element={<ProtectedRoute><Layout /></ProtectedRoute>}>
@@ -36,6 +36,7 @@ function App() {
                         </Route>
                         <Route path="*" element={<Navigate to="/" replace />} />
                     </Routes>
+                </Auth0Provider>
         </BrowserRouter>
     );
 }

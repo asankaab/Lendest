@@ -6,6 +6,7 @@ import { api } from '../lib/api';
 import { formatCurrency } from '../lib/currencyFormatter';
 import AddTransactionModal from '../components/AddTransactionModal';
 import DashboardSkeleton from '../components/DashboardSkeleton';
+import { useAuth0 } from '@auth0/auth0-react';
 
 export default function Dashboard() {
     const navigate = useNavigate();
@@ -15,8 +16,7 @@ export default function Dashboard() {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const currency = 'lkr';
 
-    const { user} = null;
-    console.log(user);
+    const { user } = useAuth0();
 
     const [chartData, setChartData] = useState([]);
 

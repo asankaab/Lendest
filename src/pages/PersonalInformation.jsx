@@ -3,9 +3,10 @@ import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, User, Mail, Save, Upload, X } from 'lucide-react';
 import { api } from '../lib/api';
 import ConfirmationModal from '../components/ConfirmationModal';
+import { useAuth0 } from '@auth0/auth0-react';
 
 export default function PersonalInformation() {
-    const { user } = null;
+    const { user } = useAuth0();
     const navigate = useNavigate();
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
