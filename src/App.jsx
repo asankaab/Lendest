@@ -11,7 +11,11 @@ import Transactions from './pages/Transactions';
 import Settings from './pages/Settings';
 import PersonalInformation from './pages/PersonalInformation';
 import CurrencySettings from './pages/CurrencySettings';
+<<<<<<< HEAD
 import { AuthProvider } from './contexts/AuthProvider';
+=======
+import { AuthProvider } from './context/AuthProvider';
+>>>>>>> 13af10e341f71a153942c64c6efba3ad96e05558
 
 function App() {
     return (

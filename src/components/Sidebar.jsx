@@ -2,7 +2,11 @@ import { NavLink } from 'react-router-dom';
 import { LayoutDashboard, Users, Settings, LogOut, Sun, Moon, Menu, X } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
 import { useContext, useState } from 'react';
+<<<<<<< HEAD
 import { ThemeContext } from '../contexts/context';
+=======
+import { ThemeContext } from '../context/context';
+>>>>>>> 13af10e341f71a153942c64c6efba3ad96e05558
 
 export default function Sidebar() {
     const { signOut } = useAuth();
