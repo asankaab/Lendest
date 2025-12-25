@@ -1,24 +1,21 @@
 
-import { useEffect, useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft, ArrowUpRight, ArrowDownRight, Plus, Trash2, Settings, MoreHorizontal } from 'lucide-react';
+import { useState } from 'react';
+import { useParams, useNavigate, useLoaderData, useRevalidator } from 'react-router-dom';
+import { ArrowLeft, ArrowUpRight, ArrowDownRight, Plus, Trash2, Settings } from 'lucide-react';
 import { api } from '../lib/api';
 import { formatCurrency } from '../lib/currencyFormatter';
 import AddTransactionModal from '../components/AddTransactionModal';
 import ConfirmationModal from '../components/ConfirmationModal';
 import RenameModal from '../components/RenameModal';
-import PersonDetailsSkeleton from '../components/PersonDetailsSkeleton';
 import { useAuth } from '../hooks/useAuth';
 
 export default function PersonDetails() {
-    const { username } = useParams();
     const { user, currency } = useAuth();
     const navigate = useNavigate();
-    const [transactions, setTransactions] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const [balance, setBalance] = useState(0);
-    const [personName, setPersonName] = useState('');
-    const [isModalOpen, setIsModalOpen] = useState(false);
+    const { transactions, balance, personName, username } = useLoaderData();
+    const { revalidate } = useRevalidator();
+
+    const [isComponentModalOpen, setIsComponentModalOpen] = useState(false);
 
     // Confirmation Modal State
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
@@ -28,43 +25,9 @@ export default function PersonDetails() {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
 
 
-    const fetchDetails = async () => {
-        try {
-            const user_id = decodeURIComponent(username);
-            const txs = await api.getTransactionsByPerson(user_id);
-            setTransactions(txs);
-
-            // Set display name from first transaction or username
-            if (txs.length > 0) {
-                setPersonName(txs[0].person_name);
-            } else {
-                setPersonName(user_id); // Fallback, though we might want to fetch person details if txs empty
-            }
-
-            // Calculate balance
-            const total = txs.reduce((acc, tx) => {
-                const amount = parseFloat(tx.amount);
-                if (tx.type === 'lend') return acc + amount;
-                if (tx.type === 'borrow') return acc - amount;
-                if (tx.type === 'repayment') return acc - amount; // Repayment (received) reduces the positive balance (debt to me)
-                if (tx.type === 'paid_back') return acc + amount; // Paid back (I paid) increases the positive balance (reduces debt I owe)
-                return acc;
-            }, 0);
-            setBalance(total);
-        } catch (error) {
-            console.error('Error fetching person details:', error);
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    useEffect(() => {
-        if (username) fetchDetails();
-    }, [username]);
-
     const handleCreateTransaction = async (formData) => {
         await api.createTransaction(user.id, formData);
-        await fetchDetails();
+        revalidate();
     };
 
     const confirmDelete = (id) => {
@@ -76,10 +39,9 @@ export default function PersonDetails() {
         if (transactionToDelete) {
             try {
                 await api.deleteTransaction(transactionToDelete);
-                await fetchDetails();
+                revalidate();
             } catch (error) {
                 console.error('Error deleting transaction:', error);
-                // Ideally this would also use a custom alert or toast, but native alert fallback for error is okay for now
                 alert('Failed to delete transaction');
             }
         }
@@ -104,16 +66,12 @@ export default function PersonDetails() {
         try {
             const user_id = decodeURIComponent(username);
             await api.updatePersonName(user_id, newName);
-            setPersonName(newName);
-            // Refresh details to ensure consistent state
-            await fetchDetails();
+            revalidate();
         } catch (error) {
             console.error('Error renaming person:', error);
             alert('Failed to rename person');
         }
     };
-
-    if (loading) return <PersonDetailsSkeleton />;
 
     return (
         <div>
@@ -131,8 +89,8 @@ export default function PersonDetails() {
             </button>
 
             <AddTransactionModal
-                isOpen={isModalOpen}
-                onClose={() => setIsModalOpen(false)}
+                isOpen={isComponentModalOpen}
+                onClose={() => setIsComponentModalOpen(false)}
                 onSubmit={handleCreateTransaction}
                 initialPersonName={personName}
                 initialUsername={username}
@@ -176,7 +134,7 @@ export default function PersonDetails() {
                 </div>
                 <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
                     <button
-                        onClick={() => setIsModalOpen(true)}
+                        onClick={() => setIsComponentModalOpen(true)}
                         className="flex items-center gap-2"
                         style={{
                             padding: '0.75rem 1rem',

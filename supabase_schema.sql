@@ -40,7 +40,7 @@ create table public.transactions (
   person_id uuid references public.people(id) on delete cascade, -- Cascade delete when person is deleted
   type text check (type in ('lend', 'borrow', 'repayment', 'paid_back')) not null,
   amount numeric not null,
-  person_name text, -- Optional/Legacy
+  person_username text,
   description text,
   created_at timestamp with time zone default now()
 );

@@ -64,6 +64,27 @@ button {
   font-family: inherit;
 }
 
+@media (max-width: 768px) {
+  .main {
+    margin-left: 0 !important;
+    padding: 5rem 1rem 1rem 1rem !important;
+  }
+}
+
+@media (max-width: 768px) {
+  .mobile-menu-btn {
+    display: block !important;
+  }
+
+  .mobile-overlay {
+    display: block !important;
+  }
+
+  aside.mobile-open .mobile-close-btn {
+    display: block !important;
+  }
+}
+
 /* Utilities */
 .container {
   max-width: 1200px;
@@ -129,9 +150,12 @@ button {
 
 /* Skeleton Loading Animation */
 @keyframes pulse {
-  0%, 100% {
+
+  0%,
+  100% {
     opacity: 1;
   }
+
   50% {
     opacity: 0.5;
   }
@@ -209,6 +233,22 @@ button {
   /* Make transaction items more compact */
   [style*="padding: 1rem"] {
     padding: 0.75rem !important;
+  }
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  a:nth-of-type(2) .logo {
+    animation: spin infinite 20s linear;
   }
 }
 

@@ -1,53 +1,23 @@
-import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useState } from 'react';
+import { useNavigate, useLoaderData, useRevalidator } from 'react-router-dom';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { ArrowUpRight, ArrowDownRight, DollarSign, Plus } from 'lucide-react';
 import { api } from '../lib/api';
 import { formatCurrency } from '../lib/currencyFormatter';
 import AddTransactionModal from '../components/AddTransactionModal';
-import DashboardSkeleton from '../components/DashboardSkeleton';
 import { useAuth } from '../hooks/useAuth';
 
 export default function Dashboard() {
-    const { user, currency } = useAuth();
     const navigate = useNavigate();
-    const [transactions, setTransactions] = useState([]);
-    const [stats, setStats] = useState({ net: 0, youOwe: 0, owedToYou: 0 });
-    const [loading, setLoading] = useState(true);
+    const { user, currency } = useAuth();
+    const { transactions, stats, chartData } = useLoaderData();
+    const { revalidate } = useRevalidator();
     const [isModalOpen, setIsModalOpen] = useState(false);
-
-    const [chartData, setChartData] = useState([]);
-
-    const fetchData = async () => {
-        try {
-            const [txs, dashboardStats, cData] = await Promise.all([
-                api.getTransactions(),
-                api.getDashboardStats(),
-                api.getChartData()
-            ]);
-            setTransactions(txs);
-            setStats(dashboardStats);
-            setChartData(cData);
-        } catch (error) {
-            console.error('Error fetching dashboard data:', error);
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    useEffect(() => {
-        if (user) fetchData();
-    }, [user]);
 
     const handleCreateTransaction = async (formData) => {
         await api.createTransaction(user.id, formData);
-        await fetchData(); // Refresh data
+        revalidate(); // Refresh data
     };
-
-    // Transform transactions for chart (group by month - simplified for now)
-    // const chartData = [ ... ] // Removed hardcoded data
-
-    if (loading) return <DashboardSkeleton />;
 
     return (
         <div>
@@ -77,7 +47,7 @@ export default function Dashboard() {
 
             {/* Stats Cards */}
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '1.5rem', marginBottom: '3rem' }}>
-                <div className="glass" style={{ padding: '1.5rem', borderRadius: 'var(--radius)' }}>
+                <div className="glass" style={{ padding: '1.5rem', borderRadius: 'var(--radius' }}>
                     <div className="flex items-center justify-between" style={{ marginBottom: '1rem' }}>
                         <span style={{ color: 'var(--text-secondary)' }}>Net Balance</span>
                         <DollarSign size={20} style={{ color: 'var(--accent-primary)' }} />
@@ -123,7 +93,7 @@ export default function Dashboard() {
                 <h2 style={{ fontSize: '1.25rem', marginBottom: '1.5rem', fontWeight: 'bold' }}>Financial Trend</h2>
                 <div style={{ height: '300px', width: '100%' }}>
                     <ResponsiveContainer width="100%" height={300}>
-                        <AreaChart data={chartData} style={{minWidth: '300px', minHeight: '100px'}}>
+                        <AreaChart data={chartData} style={{ minWidth: '300px', minHeight: '100px' }}>
                             <defs>
                                 <linearGradient id="colorAmount" x1="0" y1="0" x2="0" y2="1">
                                     <stop offset="5%" stopColor="var(--accent-primary)" stopOpacity={0.8} />
