@@ -1,5 +1,5 @@
-import { NavLink } from 'react-router-dom';
-import { LayoutDashboard, Users, Settings, LogOut, Sun, Moon, Menu, X } from 'lucide-react';
+import { NavLink, useNavigation } from 'react-router-dom';
+import { LayoutDashboard, Users, Settings, LogOut, Sun, Moon, Menu, X, Loader2 } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
 import { useContext, useState } from 'react';
 import { ThemeContext } from '../contexts/context';
@@ -109,16 +109,21 @@ export default function Sidebar() {
                             className={({ isActive }) =>
                                 `flex items-center gap-4 ${isActive ? 'active' : ''}`
                             }
-                            style={({ isActive }) => ({
+                            style={({ isActive, isPending }) => ({
                                 padding: '0.75rem 1rem',
                                 borderRadius: 'var(--radius)',
-                                color: isActive ? 'var(--text-primary)' : 'var(--text-secondary)',
+                                color: isActive || isPending ? 'var(--text-primary)' : 'var(--text-secondary)',
                                 background: isActive ? 'var(--bg-secondary)' : 'transparent',
                                 transition: 'all 0.2s'
                             })}
                         >
-                            <item.icon size={20} />
-                            <span>{item.label}</span>
+                            {({ isPending }) => (
+                                <>
+                                    <item.icon size={20} />
+                                    <span>{item.label}</span>
+                                    {isPending && <Loader2 style={{ animation: 'spin 1s linear infinite' }} size={20} />}
+                                </>
+                            )}
                         </NavLink>
                     ))}
                 </nav>
@@ -143,20 +148,6 @@ export default function Sidebar() {
                     </button>
                 </div>
             </aside>
-
-            <style>{`
-                @media (max-width: 768px) {
-                    .mobile-menu-btn {
-                        display: block !important;
-                    }
-                    .mobile-overlay {
-                        display: block !important;
-                    }
-                    aside.mobile-open .mobile-close-btn {
-                        display: block !important;
-                    }
-                }
-            `}</style>
         </>
     );
 }

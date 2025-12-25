@@ -51,7 +51,11 @@ export const AuthProvider = ({ children }) => {
 
     return (
         <AuthContext.Provider value={value}>
-            {!loading && children}
+            {loading ? (
+                <div className="flex items-center justify-center h-screen w-full">
+                    <img src="/manifest-icon.png" alt="Loading" width={45} height={45} />
+                </div>
+            ) : children}
         </AuthContext.Provider>
     );
 };

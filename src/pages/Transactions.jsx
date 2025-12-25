@@ -1,38 +1,18 @@
-import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useState } from 'react';
+import { useNavigate, useLoaderData } from 'react-router-dom';
 import { ArrowLeft, ArrowUpRight, ArrowDownRight, Filter } from 'lucide-react';
-import { api } from '../lib/api';
 import { formatCurrency } from '../lib/currencyFormatter';
-import TransactionsSkeleton from '../components/TransactionsSkeleton';
 import { useAuth } from '../hooks/useAuth';
 
 export default function Transactions() {
     const { user, currency } = useAuth();
     const navigate = useNavigate();
-    const [transactions, setTransactions] = useState([]);
-    const [loading, setLoading] = useState(true);
+    const transactions = useLoaderData();
     const [filter, setFilter] = useState('all'); // all, lend, borrow, repayment, paid_back
-
-    useEffect(() => {
-        const fetchTransactions = async () => {
-            try {
-                const data = await api.getTransactions();
-                setTransactions(data);
-            } catch (error) {
-                console.error('Error fetching transactions:', error);
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        if (user) fetchTransactions();
-    }, [user]);
 
     const filteredTransactions = filter === 'all'
         ? transactions
         : transactions.filter(tx => tx.type === filter);
-
-    if (loading) return <TransactionsSkeleton />;
 
     return (
         <div>

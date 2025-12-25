@@ -1,11 +1,31 @@
-import { Outlet } from 'react-router-dom';
+import { Outlet, useNavigation } from 'react-router-dom';
 import Sidebar from './Sidebar';
+import DashboardSkeleton from './skeletons/DashboardSkeleton';
+import PeopleSkeleton from './skeletons/PeopleSkeleton';
+import PersonDetailsSkeleton from './skeletons/PersonDetailsSkeleton';
+import TransactionsSkeleton from './skeletons/TransactionsSkeleton';
 
 export default function Layout() {
+    const navigation = useNavigation();
+    const isLoading = navigation.state === 'loading';
+
+    let SkeletonComponent = null;
+    if (isLoading) {
+        if (navigation.location.pathname === '/') {
+            SkeletonComponent = DashboardSkeleton;
+        } else if (navigation.location.pathname === '/people') {
+            SkeletonComponent = PeopleSkeleton;
+        } else if (navigation.location.pathname === '/transactions') {
+            SkeletonComponent = TransactionsSkeleton;
+        } else if (navigation.location.pathname.startsWith('/people/')) {
+            SkeletonComponent = PersonDetailsSkeleton;
+        }
+    }
+
     return (
         <div className="flex">
             <Sidebar />
-            <main style={{
+            <main className='main' style={{
                 marginLeft: 'var(--sidebar-width)',
                 flex: 1,
                 minHeight: '100vh',
@@ -14,18 +34,9 @@ export default function Layout() {
                 overflowX: 'hidden'
             }}>
                 <div className="container">
-                    <Outlet />
+                    {SkeletonComponent ? <SkeletonComponent /> : <Outlet />}
                 </div>
             </main>
-
-            <style>{`
-                @media (max-width: 768px) {
-                    main {
-                        margin-left: 0 !important;
-                        padding: 5rem 1rem 1rem 1rem !important;
-                    }
-                }
-            `}</style>
         </div>
     );
 }

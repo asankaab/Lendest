@@ -78,8 +78,8 @@ export const api = {
         const personId = personData.id;
 
         // 3. Create Transaction
-        // Remove username from transaction object as it's not in the transactions table
-        const { username: _, ...transactionData } = transaction;
+        // Remove username and person_name from transaction object as they are not in the transactions table
+        const { username: _, person_name: __, ...transactionData } = transaction;
 
         const { data, error } = await supabase
             .from('transactions')
@@ -145,7 +145,7 @@ export const api = {
             .from('profiles')
             .update({ currency })
             .eq('user_id', userId)
-                .select()
+            .select()
             .single();
         if (error) throw error;
         return data;
