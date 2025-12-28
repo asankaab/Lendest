@@ -1,9 +1,14 @@
 
 import { User, Bell, Shield, Wallet } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../hooks/useAuth';
+import LoadingGear from '../components/LoadingGear';
 
 export default function Settings() {
+    const { loading } = useAuth();
     const navigate = useNavigate();
+
+    if (loading) return <LoadingGear />;
     const sections = [
         {
             title: 'Profile',

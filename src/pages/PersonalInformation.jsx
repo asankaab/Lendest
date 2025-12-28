@@ -4,6 +4,7 @@ import { ArrowLeft, User, Mail, Save, Upload, X } from 'lucide-react';
 import { api } from '../lib/api';
 import ConfirmationModal from '../components/ConfirmationModal';
 import { useAuth } from '../hooks/useAuth';
+import LoadingGear from '../components/LoadingGear';
 
 export default function PersonalInformation() {
     const { user } = useAuth();
@@ -117,7 +118,7 @@ export default function PersonalInformation() {
         }
     };
 
-    if (loading) return <div className="p-8">Loading...</div>;
+    if (loading) return <LoadingGear />;
 
     return (
         <div style={{ maxWidth: '600px', margin: '0 auto' }}>

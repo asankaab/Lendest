@@ -4,6 +4,7 @@ import DashboardSkeleton from './skeletons/DashboardSkeleton';
 import PeopleSkeleton from './skeletons/PeopleSkeleton';
 import PersonDetailsSkeleton from './skeletons/PersonDetailsSkeleton';
 import TransactionsSkeleton from './skeletons/TransactionsSkeleton';
+import LoadingGear from './LoadingGear';
 
 export default function Layout() {
     const navigation = useNavigation();
@@ -19,6 +20,8 @@ export default function Layout() {
             SkeletonComponent = TransactionsSkeleton;
         } else if (navigation.location.pathname.startsWith('/people/')) {
             SkeletonComponent = PersonDetailsSkeleton;
+        } else if (navigation.location.pathname.startsWith('/settings')) {
+            SkeletonComponent = LoadingGear;
         }
     }
 

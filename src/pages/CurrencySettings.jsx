@@ -3,10 +3,13 @@ import { useNavigate } from 'react-router-dom';
 import { currencyValues } from '../lib/currencyFormatter';
 import { api } from '../lib/api';
 import { useAuth } from '../hooks/useAuth';
+import LoadingGear from '../components/LoadingGear';
 
 export default function CurrencySettings() {
-    const { user, currency, setCurrency } = useAuth();
+    const { user, currency, setCurrency, loading } = useAuth();
     const navigate = useNavigate();
+
+    if (loading) return <LoadingGear />;
 
     const currencies = currencyValues;
 
@@ -38,11 +41,10 @@ export default function CurrencySettings() {
                     {currencies.map((curr) => (
                         <button
                             key={curr.code}
-                            onClick={async() => 
-                                {
-                                    const update = await api.updateCurrency(user.id, curr.code.toLowerCase());
-                                    setCurrency(update.currency.toUpperCase());
-                                }
+                            onClick={async () => {
+                                const update = await api.updateCurrency(user.id, curr.code.toLowerCase());
+                                setCurrency(update.currency.toUpperCase());
+                            }
                             }
                             style={{
                                 padding: '1rem',
