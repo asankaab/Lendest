@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, memo, useCallback } from 'react';
 import { useLoaderData, useRevalidator, NavLink } from 'react-router-dom';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { ArrowUpRight, ArrowDownRight, DollarSign, Plus } from 'lucide-react';
@@ -7,29 +7,105 @@ import { formatCurrency } from '../lib/currencyFormatter';
 import AddTransactionModal from '../components/AddTransactionModal';
 import { useAuth } from '../hooks/useAuth';
 
-export default function Dashboard() {
+// Memoized stat card component
+const StatCard = memo(({ title, value, icon: Icon, color, subtitle }) => (
+    <div className="glass" style={{ padding: '1.5rem', borderRadius: 'var(--radius)' }}>
+        <div className="flex items-center justify-between" style={{ marginBottom: '1rem' }}>
+            <span style={{ color: 'var(--text-secondary)' }}>{title}</span>
+            <Icon size={20} style={{ color }} />
+        </div>
+        <div style={{ fontSize: '2rem', fontWeight: 'bold' }}>
+            {value}
+        </div>
+        <div style={{ marginTop: '0.5rem', fontSize: '0.875rem', color: 'var(--text-secondary)' }}>
+            {subtitle}
+        </div>
+    </div>
+));
+
+StatCard.displayName = 'StatCard';
+
+// Memoized transaction item component
+const TransactionItem = memo(({ tx, currency }) => (
+    <div className="flex items-center justify-between" style={{
+        padding: '1rem',
+        borderRadius: 'var(--radius)',
+        background: 'var(--bg-secondary)',
+        border: '1px solid var(--border-color)'
+    }}>
+        <div className="flex items-center gap-4">
+            <div style={{
+                width: '40px',
+                height: '40px',
+                borderRadius: '50%',
+                background: tx.type === 'lend' ? 'rgba(16, 185, 129, 0.1)' :
+                    (tx.type === 'repayment' ? 'rgba(245, 158, 11, 0.1)' :
+                        (tx.type === 'paid_back' ? 'rgba(239, 68, 68, 0.1)' : 'rgba(239, 68, 68, 0.1)')),
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center'
+            }}>
+                {tx.type === 'lend' && <ArrowUpRight size={20} color="var(--success)" />}
+                {tx.type === 'borrow' && <ArrowDownRight size={20} color="var(--danger)" />}
+                {tx.type === 'repayment' && <ArrowDownRight size={20} color="var(--warning)" />}
+                {tx.type === 'paid_back' && <ArrowUpRight size={20} color="var(--danger)" />}
+            </div>
+            <div>
+                <div style={{ fontWeight: 'bold' }}>
+                    {tx.type === 'lend' && <span style={{ textTransform: 'capitalize' }}>Lent to {tx.person_name}</span>}
+                    {tx.type === 'borrow' && <span style={{ textTransform: 'capitalize' }}>Borrowed from {tx.person_name}</span>}
+                    {tx.type === 'repayment' && <span style={{ textTransform: 'capitalize' }}>Paid by {tx.person_name}</span>}
+                    {tx.type === 'paid_back' && <span style={{ textTransform: 'capitalize' }}>Paid back to {tx.person_name}</span>}
+                </div>
+                <div style={{ fontSize: '0.875rem', color: 'var(--text-secondary)' }}>
+                    {new Date(tx.created_at).toLocaleDateString()}
+                </div>
+            </div>
+        </div>
+        <div style={{
+            fontWeight: 'bold',
+            color: tx.type === 'lend' ? 'var(--success)' :
+                (tx.type === 'repayment' ? 'var(--warning)' :
+                    (tx.type === 'paid_back' ? 'var(--danger)' : 'var(--danger)'))
+        }}>
+            {tx.type === 'lend' ? '+' : '-'} {formatCurrency(tx.amount, currency)}
+        </div>
+    </div>
+));
+
+TransactionItem.displayName = 'TransactionItem';
+
+function Dashboard() {
     const { user, currency } = useAuth();
     const { transactions, stats, chartData } = useLoaderData();
     const { revalidate } = useRevalidator();
     const [isModalOpen, setIsModalOpen] = useState(false);
 
-    const handleCreateTransaction = async (formData) => {
+    const handleCreateTransaction = useCallback(async (formData) => {
         await api.createTransaction(user.id, formData);
         revalidate(); // Refresh data
-    };
+    }, [user.id, revalidate]);
+
+    const handleModalClose = useCallback(() => {
+        setIsModalOpen(false);
+    }, []);
+
+    const handleOpenModal = useCallback(() => {
+        setIsModalOpen(true);
+    }, []);
 
     return (
         <div>
             <AddTransactionModal
                 isOpen={isModalOpen}
-                onClose={() => setIsModalOpen(false)}
+                onClose={handleModalClose}
                 onSubmit={handleCreateTransaction}
             />
 
             <div className="flex items-center justify-between" style={{ marginBottom: '2rem' }}>
                 <h1 style={{ fontSize: '2rem', fontWeight: 'bold' }}>Dashboard</h1>
                 <button
-                    onClick={() => setIsModalOpen(true)}
+                    onClick={handleOpenModal}
                     className="flex items-center gap-2"
                     style={{
                         padding: '0.75rem 1rem',
@@ -46,45 +122,27 @@ export default function Dashboard() {
 
             {/* Stats Cards */}
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '1.5rem', marginBottom: '3rem' }}>
-                <div className="glass" style={{ padding: '1.5rem', borderRadius: 'var(--radius' }}>
-                    <div className="flex items-center justify-between" style={{ marginBottom: '1rem' }}>
-                        <span style={{ color: 'var(--text-secondary)' }}>Net Balance</span>
-                        <DollarSign size={20} style={{ color: 'var(--accent-primary)' }} />
-                    </div>
-                    <div style={{ fontSize: '2rem', fontWeight: 'bold' }}>
-                        {formatCurrency(stats.net, currency)}
-                    </div>
-                    <div className="flex items-center gap-4" style={{ marginTop: '0.5rem', fontSize: '0.875rem', color: 'var(--success)' }}>
-                        <ArrowUpRight size={16} />
-                        <span>Based on all time</span>
-                    </div>
-                </div>
-
-                <div className="glass" style={{ padding: '1.5rem', borderRadius: 'var(--radius)' }}>
-                    <div className="flex items-center justify-between" style={{ marginBottom: '1rem' }}>
-                        <span style={{ color: 'var(--text-secondary)' }}>Owed to You</span>
-                        <ArrowUpRight size={20} style={{ color: 'var(--success)' }} />
-                    </div>
-                    <div style={{ fontSize: '2rem', fontWeight: 'bold' }}>
-                        {formatCurrency(stats.owedToYou, currency)}
-                    </div>
-                    <div style={{ marginTop: '0.5rem', fontSize: '0.875rem', color: 'var(--text-secondary)' }}>
-                        From people
-                    </div>
-                </div>
-
-                <div className="glass" style={{ padding: '1.5rem', borderRadius: 'var(--radius)' }}>
-                    <div className="flex items-center justify-between" style={{ marginBottom: '1rem' }}>
-                        <span style={{ color: 'var(--text-secondary)' }}>You Owe</span>
-                        <ArrowDownRight size={20} style={{ color: 'var(--danger)' }} />
-                    </div>
-                    <div style={{ fontSize: '2rem', fontWeight: 'bold' }}>
-                        {formatCurrency(stats.youOwe, currency)}
-                    </div>
-                    <div style={{ marginTop: '0.5rem', fontSize: '0.875rem', color: 'var(--text-secondary)' }}>
-                        To people
-                    </div>
-                </div>
+                <StatCard 
+                    title="Net Balance"
+                    value={formatCurrency(stats.net, currency)}
+                    icon={DollarSign}
+                    color="var(--accent-primary)"
+                    subtitle="Based on all time"
+                />
+                <StatCard 
+                    title="Owed to You"
+                    value={formatCurrency(stats.owedToYou, currency)}
+                    icon={ArrowUpRight}
+                    color="var(--success)"
+                    subtitle="From people"
+                />
+                <StatCard 
+                    title="You Owe"
+                    value={formatCurrency(stats.youOwe, currency)}
+                    icon={ArrowDownRight}
+                    color="var(--danger)"
+                    subtitle="To people"
+                />
             </div>
 
             {/* Charts Section */}
@@ -129,51 +187,8 @@ export default function Dashboard() {
                 </div>
 
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                    {transactions.slice(0, 5).map((tx) => (
-                        <div key={tx.id} className="flex items-center justify-between" style={{
-                            padding: '1rem',
-                            borderRadius: 'var(--radius)',
-                            background: 'var(--bg-secondary)',
-                            border: '1px solid var(--border-color)'
-                        }}>
-                            <div className="flex items-center gap-4">
-                                <div style={{
-                                    width: '40px',
-                                    height: '40px',
-                                    borderRadius: '50%',
-                                    background: tx.type === 'lend' ? 'rgba(16, 185, 129, 0.1)' :
-                                        (tx.type === 'repayment' ? 'rgba(245, 158, 11, 0.1)' :
-                                            (tx.type === 'paid_back' ? 'rgba(239, 68, 68, 0.1)' : 'rgba(239, 68, 68, 0.1)')),
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    justifyContent: 'center'
-                                }}>
-                                    {tx.type === 'lend' && <ArrowUpRight size={20} color="var(--success)" />}
-                                    {tx.type === 'borrow' && <ArrowDownRight size={20} color="var(--danger)" />}
-                                    {tx.type === 'repayment' && <ArrowDownRight size={20} color="var(--warning)" />}
-                                    {tx.type === 'paid_back' && <ArrowUpRight size={20} color="var(--danger)" />}
-                                </div>
-                                <div>
-                                    <div style={{ fontWeight: 'bold' }}>
-                                        {tx.type === 'lend' && <span style={{ textTransform: 'capitalize' }}>Lent to {tx.person_name}</span>}
-                                        {tx.type === 'borrow' && <span style={{ textTransform: 'capitalize' }}>Borrowed from {tx.person_name}</span>}
-                                        {tx.type === 'repayment' && <span style={{ textTransform: 'capitalize' }}>Paid by {tx.person_name}</span>}
-                                        {tx.type === 'paid_back' && <span style={{ textTransform: 'capitalize' }}>Paid back to {tx.person_name}</span>}
-                                    </div>
-                                    <div style={{ fontSize: '0.875rem', color: 'var(--text-secondary)' }}>
-                                        {new Date(tx.created_at).toLocaleDateString()}
-                                    </div>
-                                </div>
-                            </div>
-                            <div style={{
-                                fontWeight: 'bold',
-                                color: tx.type === 'lend' ? 'var(--success)' :
-                                    (tx.type === 'repayment' ? 'var(--warning)' :
-                                        (tx.type === 'paid_back' ? 'var(--danger)' : 'var(--danger)'))
-                            }}>
-                                {tx.type === 'lend' ? '+' : '-'} {formatCurrency(tx.amount, currency)}
-                            </div>
-                        </div>
+                    {transactions.map((tx) => (
+                        <TransactionItem key={tx.id} tx={tx} currency={currency} />
                     ))}
                     {transactions.length === 0 && (
                         <div style={{ textAlign: 'center', color: 'var(--text-secondary)', padding: '2rem' }}>
@@ -185,3 +200,5 @@ export default function Dashboard() {
         </div>
     );
 }
+
+export default memo(Dashboard);

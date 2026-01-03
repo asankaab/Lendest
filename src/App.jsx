@@ -1,16 +1,20 @@
+import { lazy, Suspense } from 'react';
 import { createBrowserRouter, RouterProvider, Navigate, Outlet } from 'react-router-dom';
 import ProtectedRoute from './components/ProtectedRoute';
 import Layout from './components/Layout';
 import Login from './pages/Login';
-import Dashboard from './pages/Dashboard';
 import InstallPrompt from './components/InstallPrompt';
+import RouteLoadingFallback from './components/RouteLoadingFallback';
 
-import People from './pages/People';
-import PersonDetails from './pages/PersonDetails';
-import Transactions from './pages/Transactions';
-import Settings from './pages/Settings';
-import PersonalInformation from './pages/PersonalInformation';
-import CurrencySettings from './pages/CurrencySettings';
+// Lazy load pages for code splitting
+const Dashboard = lazy(() => import('./pages/Dashboard'));
+const People = lazy(() => import('./pages/People'));
+const PersonDetails = lazy(() => import('./pages/PersonDetails'));
+const Transactions = lazy(() => import('./pages/Transactions'));
+const Settings = lazy(() => import('./pages/Settings'));
+const PersonalInformation = lazy(() => import('./pages/PersonalInformation'));
+const CurrencySettings = lazy(() => import('./pages/CurrencySettings'));
+
 import { AuthProvider } from './contexts/AuthProvider';
 import { dashboardLoader, peopleLoader, personDetailsLoader, transactionsLoader } from './lib/loaders';
 
@@ -28,35 +32,35 @@ const router = createBrowserRouter([
         children: [
             {
                 path: "/",
-                element: <Dashboard />,
+                element: <Suspense fallback={<RouteLoadingFallback />}><Dashboard /></Suspense>,
                 loader: dashboardLoader,
             },
             {
                 path: "/people",
-                element: <People />,
+                element: <Suspense fallback={<RouteLoadingFallback />}><People /></Suspense>,
                 loader: peopleLoader,
             },
             {
                 path: "/people/:username",
-                element: <PersonDetails />,
+                element: <Suspense fallback={<RouteLoadingFallback />}><PersonDetails /></Suspense>,
                 loader: personDetailsLoader,
             },
             {
                 path: "/transactions",
-                element: <Transactions />,
+                element: <Suspense fallback={<RouteLoadingFallback />}><Transactions /></Suspense>,
                 loader: transactionsLoader,
             },
             {
                 path: "/settings",
-                element: <Settings />,
+                element: <Suspense fallback={<RouteLoadingFallback />}><Settings /></Suspense>,
             },
             {
                 path: "/settings/personal-information",
-                element: <PersonalInformation />,
+                element: <Suspense fallback={<RouteLoadingFallback />}><PersonalInformation /></Suspense>,
             },
             {
                 path: "/settings/currency",
-                element: <CurrencySettings />,
+                element: <Suspense fallback={<RouteLoadingFallback />}><CurrencySettings /></Suspense>,
             },
         ],
     },

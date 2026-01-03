@@ -50,24 +50,47 @@ export default defineConfig({
         globPatterns: ['**/*.{js,css,html,ico,png,svg,woff,woff2,ttf,eot}'],
         navigateFallback: 'index.html',
         runtimeCaching: [
+          // People list - cache for 24 hours (changes infrequently)
           {
-            urlPattern: /^https:\/\/api\..*/i,
-            handler: 'NetworkFirst',
+            urlPattern: /\/rest\/v1\/people/,
+            handler: 'StaleWhileRevalidate',
             options: {
-              cacheName: 'api-cache',
+              cacheName: 'people-cache',
               expiration: {
-                maxEntries: 10,
-                maxAgeSeconds: 60 * 5 // 5 minutes
+                maxEntries: 50,
+                maxAgeSeconds: 3600 * 24 // 24 hours
               }
             }
           },
+          // Transactions - network first, cache for 5 minutes
           {
-            urlPattern: /^https:\/\/.+\.(png|jpg|jpeg|svg|gif)$/i,
+            urlPattern: /\/rest\/v1\/transactions/,
+            handler: 'NetworkFirst',
+            options: {
+              cacheName: 'transactions-cache',
+              expiration: {
+                maxEntries: 100,
+                maxAgeSeconds: 300 // 5 minutes
+              }
+            }
+          },
+          // Supabase auth - network first
+          {
+            urlPattern: /\/auth\/v1\/(token|user|session)/,
+            handler: 'NetworkFirst',
+            options: {
+              cacheName: 'auth-cache',
+              networkTimeoutSeconds: 10
+            }
+          },
+          // Images and avatars - cache first, 30 days
+          {
+            urlPattern: /^https:\/\/.+\.(png|jpg|jpeg|svg|gif|webp)$/i,
             handler: 'CacheFirst',
             options: {
               cacheName: 'image-cache',
               expiration: {
-                maxEntries: 60,
+                maxEntries: 100,
                 maxAgeSeconds: 60 * 60 * 24 * 30 // 30 days
               }
             }
@@ -76,5 +99,30 @@ export default defineConfig({
       }
     })
   ],
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          'vendor': ['react', 'react-dom', 'react-router-dom'],
+          'supabase': ['@supabase/supabase-js'],
+          'charts': ['recharts'],
+          'icons': ['lucide-react']
+        }
+      }
+    },
+    minify: 'terser',
+    terserOptions: {
+      compress: {
+        drop_console: true,
+        drop_debugger: true
+      }
+    },
+    sourcemap: false,
+    chunkSizeWarningLimit: 500,
+    reportCompressedSize: true,
+    target: 'esnext',
+    cssCodeSplit: true,
+    cssMinify: true
+  }
 })
 

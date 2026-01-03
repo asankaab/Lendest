@@ -3,7 +3,7 @@ import { supabase } from './supabase';
 
 export const api = {
     // Transactions
-    getTransactions: async () => {
+    getTransactions: async (limit = 1000) => {
         const { data, error } = await supabase
             .from('transactions')
             .select(`
@@ -13,7 +13,8 @@ export const api = {
                     username
                 )
             `)
-            .order('created_at', { ascending: false });
+            .order('created_at', { ascending: false })
+            .limit(limit);
         if (error) throw error;
         // Map old person_name if person_id is null (fallback)
         return data.map(tx => ({
@@ -21,6 +22,11 @@ export const api = {
             person_name: tx.people ? tx.people.name : tx.person_name,
             person_username: tx.people ? tx.people.username : null
         }));
+    },
+
+    // Get limited transactions for dashboard
+    getRecentTransactions: async (limit = 5) => {
+        return api.getTransactions(limit);
     },
 
     getTransactionsByPerson: async (username) => {
@@ -153,7 +159,8 @@ export const api = {
 
     uploadAvatar: async (userId, file) => {
         const fileExt = file.name.split('.').pop();
-        const fileName = `${userId}/avatar.${fileExt}`;
+        const timestamp = Math.floor(Date.now() / 1000); // Version as unix timestamp
+        const fileName = `${userId}/avatar_v${timestamp}.${fileExt}`;
 
         // Delete old avatar if exists
         const { data: existingFiles } = await supabase
@@ -166,30 +173,27 @@ export const api = {
             await supabase.storage.from('avatars').remove(filesToDelete);
         }
 
-        // Upload new avatar
+        // Upload new avatar with versioning in filename
         const { data, error } = await supabase
             .storage
             .from('avatars')
             .upload(fileName, file, {
-                cacheControl: '3600',
-                upsert: true
+                cacheControl: '31536000', // Cache for 1 year since filename includes version
+                upsert: false
             });
 
         if (error) throw error;
 
-        // Get public URL with cache-busting timestamp
+        // Get public URL - no timestamp query needed, version is in filename
         const { data: { publicUrl } } = supabase
             .storage
             .from('avatars')
             .getPublicUrl(fileName);
 
-        // Add timestamp to prevent browser caching
-        const urlWithTimestamp = `${publicUrl}?t=${Date.now()}`;
+        // Update profile with avatar URL (without timestamp query param)
+        await api.updateProfile(userId, { avatar_url: publicUrl });
 
-        // Update profile with avatar URL
-        await api.updateProfile(userId, { avatar_url: urlWithTimestamp });
-
-        return urlWithTimestamp;
+        return publicUrl;
     },
 
     deleteAvatar: async (userId) => {
@@ -213,15 +217,22 @@ export const api = {
         await api.updateProfile(userId, { avatar_url: null });
     },
 
-    // Dashboard Aggregates (calculated on client for simplicity)
-    getDashboardStats: async () => {
-        const { data: transactions, error } = await supabase
-            .from('transactions')
-            .select('amount, type');
+    // Dashboard Aggregates - accept cached transactions to avoid re-fetching
+    getDashboardStats: async (transactions = null) => {
+        let data;
+        if (transactions) {
+            // Reuse transactions if already fetched
+            data = transactions;
+        } else {
+            // Only fetch if not provided
+            const { data: txData, error } = await supabase
+                .from('transactions')
+                .select('amount, type');
+            if (error) throw error;
+            data = txData;
+        }
 
-        if (error) throw error;
-
-        const stats = transactions.reduce((acc, curr) => {
+        const stats = data.reduce((acc, curr) => {
             const amount = parseFloat(curr.amount) || 0; // Handle potential nulls/invalid numbers
             if (curr.type === 'lend') {
                 acc.owedToYou += amount;
@@ -243,13 +254,24 @@ export const api = {
         };
     },
 
-    getChartData: async () => {
-        const { data: transactions, error } = await supabase
-            .from('transactions')
-            .select('amount, type, created_at')
-            .order('created_at', { ascending: true });
+    getChartData: async (transactions = null) => {
+        let data;
+        if (transactions) {
+            // Reuse transactions if already fetched
+            data = transactions;
+        } else {
+            // Only fetch if not provided
+            const { data: txData, error } = await supabase
+                .from('transactions')
+                .select('amount, type, created_at')
+                .order('created_at', { ascending: true });
+            if (error) throw error;
+            data = txData;
+        }
+        return api._processChartData(data);
+    },
 
-        if (error) throw error;
+    _processChartData: (transactions) => {
 
         // Group by Year-Month to ensure correct sorting
         const monthlyData = transactions.reduce((acc, curr) => {

@@ -1,12 +1,19 @@
 import { api } from './api';
 
 export const dashboardLoader = async () => {
-    const [transactions, stats, chartData] = await Promise.all([
-        api.getTransactions(),
-        api.getDashboardStats(),
-        api.getChartData()
+    // Fetch all transactions once, then calculate stats and chart data from it
+    const transactions = await api.getTransactions();
+    
+    // Pass transactions to avoid re-fetching
+    const [stats, chartData] = await Promise.all([
+        api.getDashboardStats(transactions),
+        api.getChartData(transactions)
     ]);
-    return { transactions, stats, chartData };
+    
+    // Return only recent transactions for display
+    const recentTransactions = transactions.slice(0, 5);
+    
+    return { transactions: recentTransactions, stats, chartData };
 };
 
 export const peopleLoader = async () => {
