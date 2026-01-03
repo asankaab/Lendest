@@ -1,0 +1,30 @@
+# LendBook robots.txt
+# https://www.robotstxt.org/robotstxt.html
+
+# Allow all search engines
+User-agent: *
+Allow: /
+
+# Disallow private/authenticated routes
+Disallow: /login
+Disallow: /settings
+Disallow: /people/*
+Disallow: /transactions
+
+# Sitemap location (if you have one)
+# Sitemap: https://lendbook.example.com/sitemap.xml
+
+# Specific bot rules
+User-agent: Googlebot
+Allow: /
+Crawl-delay: 0
+
+User-agent: Bingbot
+Allow: /
+Crawl-delay: 1
+
+# Block bad bots
+User-agent: AhrefsBot
+User-agent: SemrushBot
+User-agent: DotBot
+Disallow: /
