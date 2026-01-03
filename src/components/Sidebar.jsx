@@ -28,7 +28,7 @@ export default function Sidebar() {
         <>
             {/* Mobile Menu Button - Hidden when sidebar is open */}
             {!isMobileMenuOpen && (
-                <button
+                <button name='open sidebar menu'
                     onClick={toggleMobileMenu}
                     style={{
                         position: 'fixed',
