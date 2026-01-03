@@ -3,6 +3,7 @@ import ProtectedRoute from './components/ProtectedRoute';
 import Layout from './components/Layout';
 import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
+import InstallPrompt from './components/InstallPrompt';
 
 import People from './pages/People';
 import PersonDetails from './pages/PersonDetails';
@@ -68,6 +69,7 @@ const router = createBrowserRouter([
 function App() {
     return (
         <AuthProvider>
+            <InstallPrompt />
             <RouterProvider router={router} />
         </AuthProvider>
     );
