@@ -28,7 +28,7 @@ export default function Sidebar() {
         <>
             {/* Mobile Menu Button - Hidden when sidebar is open */}
             {!isMobileMenuOpen && (
-                <button name='open sidebar menu'
+                <button aria-label='open sidebar menu' id='menu'
                     onClick={toggleMobileMenu}
                     style={{
                         position: 'fixed',
