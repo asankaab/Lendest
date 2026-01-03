@@ -1,11 +1,15 @@
-import { useState, memo, useCallback } from 'react';
+import { useState, memo, useCallback, Suspense, lazy } from 'react';
 import { useLoaderData, useRevalidator, NavLink } from 'react-router-dom';
-import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { ArrowUpRight, ArrowDownRight, DollarSign, Plus } from 'lucide-react';
 import { api } from '../lib/api';
 import { formatCurrency } from '../lib/currencyFormatter';
-import AddTransactionModal from '../components/AddTransactionModal';
 import { useAuth } from '../hooks/useAuth';
+
+// Lazy load Recharts - only when Dashboard is visited
+const DashboardChart = lazy(() => import('../components/DashboardChart'));
+
+// Lazy load modal - only when user clicks button
+const AddTransactionModal = lazy(() => import('../components/AddTransactionModal'));
 
 // Memoized stat card component
 const StatCard = memo(({ title, value, icon: Icon, color, subtitle }) => (
@@ -96,11 +100,15 @@ function Dashboard() {
 
     return (
         <div>
-            <AddTransactionModal
-                isOpen={isModalOpen}
-                onClose={handleModalClose}
-                onSubmit={handleCreateTransaction}
-            />
+            {isModalOpen && (
+                <Suspense fallback={null}>
+                    <AddTransactionModal
+                        isOpen={isModalOpen}
+                        onClose={handleModalClose}
+                        onSubmit={handleCreateTransaction}
+                    />
+                </Suspense>
+            )}
 
             <div className="flex items-center justify-between" style={{ marginBottom: '2rem' }}>
                 <h1 style={{ fontSize: '2rem', fontWeight: 'bold' }}>Dashboard</h1>
@@ -145,34 +153,10 @@ function Dashboard() {
                 />
             </div>
 
-            {/* Charts Section */}
-            <div className="glass" style={{ padding: '2rem', borderRadius: 'var(--radius)', marginBottom: '2rem' }}>
-                <h2 style={{ fontSize: '1.25rem', marginBottom: '1.5rem', fontWeight: 'bold' }}>Financial Trend</h2>
-                <div style={{ height: '300px', width: '100%' }}>
-                    <ResponsiveContainer width="100%" height={300}>
-                        <AreaChart data={chartData} style={{ minWidth: '300px', minHeight: '100px' }}>
-                            <defs>
-                                <linearGradient id="colorAmount" x1="0" y1="0" x2="0" y2="1">
-                                    <stop offset="5%" stopColor="var(--accent-primary)" stopOpacity={0.8} />
-                                    <stop offset="95%" stopColor="var(--accent-primary)" stopOpacity={0} />
-                                </linearGradient>
-                            </defs>
-                            <CartesianGrid strokeDasharray="3 3" stroke="var(--border-color)" vertical={false} />
-                            <XAxis dataKey="name" stroke="var(--text-secondary)" tickLine={false} axisLine={false} />
-                            <YAxis stroke="var(--text-secondary)" tickLine={false} axisLine={false} />
-                            <Tooltip
-                                contentStyle={{
-                                    backgroundColor: 'var(--bg-card)',
-                                    borderColor: 'var(--border-color)',
-                                    borderRadius: 'var(--radius)',
-                                    color: 'var(--text-primary)'
-                                }}
-                            />
-                            <Area type="monotone" dataKey="amount" stroke="var(--accent-primary)" fillOpacity={1} fill="url(#colorAmount)" />
-                        </AreaChart>
-                    </ResponsiveContainer>
-                </div>
-            </div>
+            {/* Charts Section - Lazy loaded */}
+            <Suspense fallback={<div style={{ padding: '2rem', textAlign: 'center', color: 'var(--text-secondary)' }}>Loading chart...</div>}>
+                <DashboardChart data={chartData} />
+            </Suspense>
 
             {/* Recent Transactions */}
             <div className="glass" style={{ padding: '2rem', borderRadius: 'var(--radius)' }}>
