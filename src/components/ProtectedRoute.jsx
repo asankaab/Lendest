@@ -7,7 +7,7 @@ export default function ProtectedRoute({ children }) {
     const { user, loading } = useContext(AuthContext);
 
     if (loading) {
-        return <div className="flex items-center center" style={{ height: '100vh', justifyContent: 'center' }}>Loading...</div>;
+        return <div className="flex items-center center justify-center h-screen">Loading...</div>;
     }
 
     if (!user) {

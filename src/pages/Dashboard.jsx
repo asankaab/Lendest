@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate, useLoaderData, useRevalidator } from 'react-router-dom';
+import { useLoaderData, useRevalidator, NavLink } from 'react-router-dom';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { ArrowUpRight, ArrowDownRight, DollarSign, Plus } from 'lucide-react';
 import { api } from '../lib/api';
@@ -8,7 +8,6 @@ import AddTransactionModal from '../components/AddTransactionModal';
 import { useAuth } from '../hooks/useAuth';
 
 export default function Dashboard() {
-    const navigate = useNavigate();
     const { user, currency } = useAuth();
     const { transactions, stats, chartData } = useLoaderData();
     const { revalidate } = useRevalidator();
@@ -121,12 +120,12 @@ export default function Dashboard() {
             <div className="glass" style={{ padding: '2rem', borderRadius: 'var(--radius)' }}>
                 <div className="flex items-center justify-between" style={{ marginBottom: '1.5rem' }}>
                     <h2 style={{ fontSize: '1.25rem', fontWeight: 'bold' }}>Recent Transactions</h2>
-                    <button
-                        onClick={() => navigate('/transactions')}
+                    <NavLink
+                        to='/transactions'
                         style={{ color: 'var(--accent-primary)', fontSize: '0.875rem', fontWeight: '600', cursor: 'pointer' }}
                     >
                         View All
-                    </button>
+                    </NavLink>
                 </div>
 
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>

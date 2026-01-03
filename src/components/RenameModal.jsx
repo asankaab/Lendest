@@ -1,14 +1,8 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { X } from 'lucide-react';
 
 export default function RenameModal({ isOpen, onClose, onSubmit, currentName }) {
-    const [name, setName] = useState('');
-
-    useEffect(() => {
-        if (isOpen) {
-            setName(currentName || '');
-        }
-    }, [isOpen, currentName]);
+    const [name, setName] = useState(currentName || '');
 
     const handleSubmit = (e) => {
         e.preventDefault();

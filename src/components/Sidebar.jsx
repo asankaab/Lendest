@@ -118,11 +118,13 @@ export default function Sidebar() {
                             })}
                         >
                             {({ isPending }) => (
-                                <>
-                                    <item.icon size={20} />
-                                    <span>{item.label}</span>
+                                <div className='flex items-center justify-between w-full'>
+                                    <div className='flex items-center gap-2'>
+                                        <item.icon size={20} />
+                                        <span>{item.label}</span>
+                                    </div>
                                     {isPending && <Loader2 style={{ animation: 'spin 1s linear infinite' }} size={20} />}
-                                </>
+                                </div>
                             )}
                         </NavLink>
                     ))}

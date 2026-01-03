@@ -2,14 +2,15 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
+import { Loader2 } from 'lucide-react';
 
 export default function Login() {
-    const { signInWithPassword, signUpWithPassword, signInWithGoogle, user, loading: authLoading } = useAuth();
+    const { signInWithGoogle, user, loading: authLoading, signInWithMagicLink } = useAuth();
     const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
-    const [isSignUp, setIsSignUp] = useState(false);
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
+    const [magicLinkSent, setMagicLinkSent] = useState(false);
+    const [successMessage, setSuccessMessage] = useState('');
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -23,15 +24,19 @@ export default function Login() {
         setError('');
         setLoading(true);
         try {
-            if (isSignUp) {
-                const { error } = await signUpWithPassword(email, password);
+            setMagicLinkSent(false);
+            setSuccessMessage('');
+
+            const { error } = await signInWithMagicLink({
+                email,
+                options: {
+                    emailRedirectTo: import.meta.env.VITE_SITE_URL
+                }
+            });
                 if (error) throw error;
-                alert('Check your email for the confirmation link!');
-            } else {
-                const { error } = await signInWithPassword(email, password);
-                if (error) throw error;
-                navigate('/');
-            }
+                setMagicLinkSent(true);
+                setSuccessMessage('Successfully sent magic link! Check your email.');
+            
         } catch (err) {
             setError(err.message);
         } finally {
@@ -40,68 +45,70 @@ export default function Login() {
     };
 
     return (
-        <div className="flex items-center center" style={{ height: '100vh', justifyContent: 'center' }}>
+        <div className="flex items-center justify-center center h-screen">
             <div className="glass" style={{ padding: '3rem', borderRadius: '1rem', width: '100%', maxWidth: '400px' }}>
                 <h1 style={{ marginBottom: '2rem', fontSize: '2rem', textAlign: 'center' }}>
-                    {isSignUp ? 'Create Account' : 'Welcome Back'}
+                    Lendbook
                 </h1>
 
-                {error && <div style={{ color: 'var(--danger)', marginBottom: '1rem', textAlign: 'center' }}>{error}</div>}
+                {error && <div style={{ color: 'var(--danger)', fontSize: '0.875rem', marginBottom: '1rem', textAlign: 'center' }}>{error}</div>}
+                {!error && magicLinkSent && (
+                    <div style={{ color: 'var(--success)', fontSize: '0.875rem', marginBottom: '1rem', textAlign: 'center' }}>
+                        {successMessage}
+                    </div>
+                )}
 
-                <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                    <input
-                        type="email"
-                        placeholder="Email"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        style={{ padding: '0.75rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-color)', background: 'var(--bg-secondary)', color: 'var(--text-primary)' }}
-                        required
-                    />
-                    <input
-                        type="password"
-                        placeholder="Password"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                        style={{ padding: '0.75rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-color)', background: 'var(--bg-secondary)', color: 'var(--text-primary)' }}
-                        required
-                    />
-                    <button
+                {!user ? <>
+                    <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                        <input
+                            type="email"
+                            placeholder="Email"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                            style={{ padding: '0.75rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-color)', background: 'var(--bg-secondary)', color: 'var(--text-primary)' }}
+                            required
+                        />
+                        <button
                         type="submit"
                         disabled={loading}
                         style={{
+                            width: '100%',
                             padding: '0.75rem',
                             borderRadius: 'var(--radius-md)',
-                            background: 'var(--accent-primary)',
-                            color: 'white',
+                            border: '1px solid var(--border-color)',
+                            background: 'var(--bg-secondary)',
+                            color: 'var(--text-primary)',
+                            fontWeight: 'bold'
+                        }}
+                    >Sign In</button>
+                    </form>
+                    <div style={{ marginTop: '1rem', textAlign: 'center' }}>
+                        <small style={{ color: 'var(--text-secondary)' }}>We will send a Magic Link to your email to Signup or Login.</small>
+                    </div>
+                    <div style={{ display: 'flex', alignItems: 'center', margin: '1.5rem 0', color: 'var(--text-secondary)' }}>
+                        <div style={{ flex: 1, height: '1px', background: 'var(--border-color)' }}></div>
+                        <span style={{ padding: '0 1rem', fontSize: '0.875rem', fontWeight: '500' }}>OR</span>
+                        <div style={{ flex: 1, height: '1px', background: 'var(--border-color)' }}></div>
+                    </div>
+                    <button
+                        onClick={signInWithGoogle}
+                        style={{
+                            width: '100%',
+                            padding: '0.75rem',
+                            borderRadius: 'var(--radius-md)',
+                            border: '1px solid var(--border-color)',
+                            background: 'var(--bg-secondary)',
+                            color: 'var(--text-primary)',
                             fontWeight: 'bold'
                         }}
                     >
-                        {loading ? 'Loading...' : (isSignUp ? 'Sign Up' : 'Sign In')}
+                        Sign in with Google
                     </button>
-                </form>
-
-                <div style={{ marginTop: '1rem', textAlign: 'center' }}>
-                    <button onClick={() => setIsSignUp(!isSignUp)} style={{ color: 'var(--text-secondary)' }}>
-                        {isSignUp ? 'Already have an account? Sign In' : "Don't have an account? Sign Up"}
-                    </button>
-                </div>
-
-                <div style={{ margin: '1rem 0', textAlign: 'center', color: 'var(--text-secondary)' }}><small>- OR -</small></div>
-
-                <button
-                    onClick={signInWithGoogle}
-                    style={{
-                        width: '100%',
-                        padding: '0.75rem',
-                        borderRadius: 'var(--radius-md)',
-                        border: '1px solid var(--border-color)',
-                        background: 'var(--bg-secondary)',
-                        color: 'var(--text-primary)',
-                        fontWeight: 'bold'
-                    }}
-                >
-                    Sign in with Google
-                </button>
+                </> : 
+                <div className="flex items-center justify-center center gap-2">
+                    <Loader2 style={{ animation: 'spin 1s linear infinite' }} size={20} />
+                    <small>Redirecting...</small>
+                    </div>}
             </div>
         </div>
     );

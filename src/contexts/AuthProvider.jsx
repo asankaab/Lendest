@@ -40,6 +40,12 @@ export const AuthProvider = ({ children }) => {
         signInWithGoogle: () => supabase.auth.signInWithOAuth({ provider: 'google', options: { redirectTo: import.meta.env.VITE_SITE_URL } }),
         signInWithPassword: (email, password) => supabase.auth.signInWithPassword({ email, password }),
         signUpWithPassword: (email, password) => supabase.auth.signUp({ email, password }),
+        signInWithMagicLink: (data) => supabase.auth.signInWithOtp({
+                email: data.email,
+                options: {
+                    emailRedirectTo: import.meta.env.VITE_SITE_URL
+                }
+            }),
         signOut: () => supabase.auth.signOut(),
         user,
         loading,
